@@ -55,7 +55,8 @@ class GrampsConnect(Application):
             url(r"/", MainHandler, name="main"),
             url(r'/login', LoginHandler, name="login"),
             url(r'/logout', LogoutHandler, name="logout"),
-            url(r"/styles/(.*)", StaticFileHandler, {"path": gramps.gen.const.DATA_DIR}),
+            url(r'/person/(.*)', PersonHandler, name="person"),
+            url(r"/styles/(.*)", StaticFileHandler, {'path': gramps.gen.const.DATA_DIR}),
         ], **settings)
 
     def default_settings(self):

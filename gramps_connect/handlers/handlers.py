@@ -1,6 +1,9 @@
 import tornado.web
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
+from gramps.gen.dbstate import DbState
+
+db = DbState().open_database("Gramps Connect")
 
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
@@ -16,8 +19,8 @@ class BaseHandler(tornado.web.RequestHandler):
         locale = GrampsLocale(lang=language)
         self._ = locale.translation.gettext
  
-    def get_template_dict(self):
-        return {
+    def get_template_dict(self, **kwargs):
+        dict = {
             "action": "", 
             "menu": [], 
             "user": self.current_user, 
@@ -27,6 +30,8 @@ class BaseHandler(tornado.web.RequestHandler):
             "messages": [],
             "_": self._,
         }
+        dict.update(kwargs)
+        return dict
 
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
@@ -59,3 +64,12 @@ class LogoutHandler(BaseHandler):
         self.redirect(self.get_argument("next", 
                                         self.reverse_url("main")))
 
+class PersonHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, user):
+        person = db.get_person_from_gramps_id("I0000")
+        person.probably_alive = True
+        self.render("view_person_detail.html", 
+                    **self.get_template_dict(tview="person", 
+                                             person=person,
+                                             logform=None))

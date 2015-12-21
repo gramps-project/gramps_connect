@@ -1,0 +1,9 @@
+  {# format "/browse|Browse" #}||
+  {# format "/%s/%s|%s" view args tviews #}
+  {% if 0 %} {# object.gramps_id #}
+  || {# format "/%s/%s|%s [%s]" view object.handle tview object.gramps_id #}
+  {% else %}
+    {# if object.name #}
+  || {# format "/%s/%s|%s [%s]" view object.handle tview object.name #}
+    {# end #}
+  {% end %}
