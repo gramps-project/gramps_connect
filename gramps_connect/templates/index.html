@@ -1,10 +1,6 @@
-<html>
-<head>
-<title>Welcome Back!</title>
-</head>
-<body>
-<h1>Welcome, {{ user }}</h1>
-<a href="/logout">logout</a>
-</body>
-</html>
+{% extends "gramps-base.html" %}
 
+{% block content %}
+<h2>Welcome, {{user}}</h2>
+<a href="/logout">logout</a>
+{% end %}

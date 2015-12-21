@@ -25,7 +25,7 @@ import uuid
 
 ## Tornado imports
 import tornado.ioloop
-from tornado.web import Application, url
+from tornado.web import Application, url, StaticFileHandler
 from tornado.options import define, options
 import tornado.log
 
@@ -52,9 +52,10 @@ class GrampsConnect(Application):
         if settings is None:
             settings = self.default_settings()
         super().__init__([
-            tornado.web.url(r"/", MainHandler, name="main"),
-            tornado.web.url(r'/login', LoginHandler, name="login"),
-            tornado.web.url(r'/logout', LogoutHandler, name="logout"),
+            url(r"/", MainHandler, name="main"),
+            url(r'/login', LoginHandler, name="login"),
+            url(r'/logout', LogoutHandler, name="logout"),
+            url(r"/styles/(.*)", StaticFileHandler, {"path": gramps.gen.const.DATA_DIR}),
         ], **settings)
 
     def default_settings(self):
