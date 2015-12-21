@@ -5,6 +5,7 @@ Gramps Connect is a web-based application for geneaology
 Requirements
 ------------
 
+* Python3
 * tornado
 * gramps 5.0
 
