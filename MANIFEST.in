@@ -1,0 +1,12 @@
+include *.txt
+include *.rst
+include *.md
+recursive-include docs *.rst
+recursive-include docs *.png
+recursive-include docs *.py
+recursive-include gramps_connect/templates *.html
+prune .git
+prune docs/build
+prune dist
+prune build
+prune docs
