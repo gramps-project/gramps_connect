@@ -5,6 +5,10 @@ from gramps.gen.dbstate import DbState
 
 db = DbState().open_database("Gramps Connect")
 
+template_functions = {}
+exec("from gramps_connect.template_functions import *", 
+     globals(), template_functions)
+
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -29,8 +33,10 @@ class BaseHandler(tornado.web.RequestHandler):
             "gramps_version": "5.0",
             "messages": [],
             "_": self._,
+            "next": self.get_argument("next", None),
         }
         dict.update(kwargs)
+        dict.update(template_functions)
         return dict
 
 class MainHandler(BaseHandler):
@@ -50,7 +56,8 @@ class LoginHandler(BaseHandler):
         # TODO : Check data from DB
         if "demo" == getusername and "demo" == getpassword:
             self.set_secure_cookie("user", self.get_argument("username"))
-            self.redirect(self.reverse_url("main"))
+            self.redirect(self.get_argument("next", 
+                                            self.reverse_url("main")))
         else:
             wrong = self.get_secure_cookie("wrong")
             if not wrong:

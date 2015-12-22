@@ -57,6 +57,7 @@ class GrampsConnect(Application):
             url(r'/logout', LogoutHandler, name="logout"),
             url(r'/person/(.*)', PersonHandler, name="person"),
             url(r"/styles/(.*)", StaticFileHandler, {'path': gramps.gen.const.DATA_DIR}),
+            url(r"/images/(.*)", StaticFileHandler, {'path': gramps.gen.const.IMAGE_DIR}),
         ], **settings)
 
     def default_settings(self):
