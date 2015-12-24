@@ -7,14 +7,23 @@ Requirements
 
 * Python3
 * tornado
+* PIL
 * gramps 5.0
 
 Running
 -------
 
 ```shell
-python3 -m gramps_connect.app
+python3 -m gramps_connect.app --database="My Family Tree"
 ```
+
+Common Flags
+------------
+
+* --debug
+* --port
+* --hostname
+* --database
 
 Common variations
 -----------------
