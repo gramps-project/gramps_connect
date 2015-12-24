@@ -42,6 +42,8 @@ define("xsrf", default=True,
        help="Use xsrf cookie", type=bool)
 define("base_dir", default=None, 
        help="Base directory (where static, templates, etc. are)", type=str)
+define("home_dir", default=None,
+       help="Home directory for media", type=str)
 
 class GrampsConnect(Application):
     """
@@ -56,7 +58,10 @@ class GrampsConnect(Application):
             url(r'/login', LoginHandler, name="login"),
             url(r'/logout', LogoutHandler, name="logout"),
             url(r'/person/(.*)', PersonHandler, name="person"),
-            url(r'/iiif/(.*)', ImageHandler, name="iiif"),
+            url(r'/imageserver/(.*)', ImageHandler, 
+                {"HOMEDIR": self.options.home_dir},
+                name="imageserver", 
+            ),
             url(r"/styles/(.*)", StaticFileHandler, 
                 {'path': gramps.gen.const.DATA_DIR}),
             url(r"/images/(.*)", StaticFileHandler, 
@@ -68,6 +73,8 @@ class GrampsConnect(Application):
         """
         if self.options.base_dir is None:
             self.options.base_dir = os.path.dirname(__file__)
+        if self.options.home_dir is None:
+            self.options.home_dir = os.path.expanduser("~/.gramps/")
         return {
             "cookie_secret": base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
             "login_url":     "/login",

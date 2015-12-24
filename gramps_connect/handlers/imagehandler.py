@@ -1,3 +1,26 @@
+#
+# Gramps - a GTK+/GNOME based genealogy program
+#
+# Copyright (c) 2015 Gramps Development Team
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+## Based on: 
+## https://github.com/IIIF/image-api/blob/master/implementations/pi3f/pi3f_21.py
+
 import os
 import json
 import urllib
@@ -11,22 +34,27 @@ from .handlers import BaseHandler
 
 class Abort(Exception):
     """
+    Base class for aborting execution.
     """
 
 class Abort501(Abort):
     """
+    Error 501 class for aborting execution.
     """
 
 class Abort400(Abort):
     """
+    Error 400 class for aborting execution.
     """
 
 class Abort401(Abort):
     """
+    Error 401 class for aborting execution.
     """
 
 class Abort404(Abort):
     """
+    Error 404 class for aborting execution.
     """
 
 class ImageFile(object):
@@ -192,7 +220,12 @@ class ImageFile(object):
                 "profile": [cf.compliance,
                     {
                         "formats":["gif","tif","pdf"],
-                        "supports":["regionSquare", "canonicalLinkHeader", "profileLinkHeader", "mirroring", "rotationArbitrary", "sizeAboveFull"],
+                        "supports":["regionSquare", 
+                                    "canonicalLinkHeader", 
+                                    "profileLinkHeader", 
+                                    "mirroring", 
+                                    "rotationArbitrary", 
+                                    "sizeAboveFull"],
                         "qualities":qualities
                     }
                 ]
@@ -585,7 +618,7 @@ class FileSystemCacher(object):
         if not path.startswith(self.directory):
             path = os.path.join(self.directory, path)
 
-        fh = open(path, 'w')
+        fh = open(path, 'wb')
         fh.write(data)
         fh.close()
 
@@ -594,11 +627,10 @@ class FileSystemCacher(object):
             path = os.path.join(self.directory, path)
         return os.path.exists(path)
 
-
     def fetch(self, path):
         if not path.startswith(self.directory):
             path = os.path.join(self.directory, path)
-        fh = open(path)
+        fh = open(path, "rb")
         data = fh.read()
         fh.close()
         return data
@@ -606,7 +638,7 @@ class FileSystemCacher(object):
     def generate_media_type(self, path):
         if path.endswith("info.json"):
             # Check request headers for application/ld+json
-            inacc = request.headers.get('Accept', '')
+            inacc = self.request.headers.get('Accept', '')
             if inacc.find('ld+json') > -1:
                 mimetype = "application/ld+json"
             else:
@@ -626,7 +658,7 @@ class FileSystemCacher(object):
             path = os.path.join(self.directory, path)
         if not mt:
             mt = self.generate_media_type(path)
-        fh = open(path)
+        fh = open(path, "rb")
         data = fh.read()
         fh.close()
         return self.application.send(data, status=status, ct=mt)
@@ -645,23 +677,27 @@ class Config(object):
         self.BASEPREF = self.BASEURL + self.PREFIX
         self.GOOGLE_REDIRECT_URI = self.BASEPREF + self.AUTH_URL_HOME
 
-        self.formats = {'BMP' : 'image/bmp',
-                   'GIF' : 'image/gif',
-                   'JPEG': 'image/jpeg',
-                   'PCX' : 'image/pcx',
-                   'PDF' :  'application/pdf',
-                   'PNG' : 'image/png',
-                   'TIFF': 'image/tiff',
-                   'WEBP': 'image/webp'}
+        self.formats = {
+            'BMP' : 'image/bmp',
+            'GIF' : 'image/gif',
+            'JPEG': 'image/jpeg',
+            'PCX' : 'image/pcx',
+            'PDF' :  'application/pdf',
+            'PNG' : 'image/png',
+            'TIFF': 'image/tiff',
+            'WEBP': 'image/webp'
+        }
 
-        self.extensions = {'bmp' : 'image/bmp',
-                   'gif' : 'image/gif',
-                   'jpg': 'image/jpeg',
-                   'pcx' : 'image/pcx',
-                   'pdf' :  'application/pdf',
-                   'png' : 'image/png',
-                   'tif' : 'image/tiff',
-                   'webp': 'image/webp'}
+        self.extensions = {
+            'bmp' : 'image/bmp',
+            'gif' : 'image/gif',
+            'jpg': 'image/jpeg',
+            'pcx' : 'image/pcx',
+            'pdf' :  'application/pdf',
+            'png' : 'image/png',
+            'tif' : 'image/tiff',
+            'webp': 'image/webp'
+        }
 
         self.content_types = {}
         for (k,v) in self.extensions.items():
@@ -678,25 +714,29 @@ class Config(object):
 
 class ImageHandler(BaseHandler):
     def __init__(self, *args, **kwargs):
+        # File path settings
+        if "HOMEDIR" in kwargs:
+            HOMEDIR = kwargs["HOMEDIR"]
+            del kwargs["HOMEDIR"]
+        else:
+            raise Exception("ImageHandler needs a HOMEDIR")
+
         super().__init__(*args, **kwargs)
         ## , BASEURL, HOMEDIR, FILEDIRS, CACHEDIR, UPLOADDIR):
 
-        # File path settings
-        HOMEDIR = "/home/dblank/.gramps"
         FILEDIRS = [
-            os.path.join(HOMEDIR,"media/")
+            os.path.join(HOMEDIR, "media/")
         ]
         IMAGEFMTS = ['png', 'jpg', 'tif']
-        self.CACHEDIR = os.path.join(HOMEDIR,"cache/")
-
-        self.UPLOADDIR = os.path.join(HOMEDIR,"media/")
+        self.CACHEDIR = os.path.join(HOMEDIR, "cache/")
+        self.UPLOADDIR = os.path.join(HOMEDIR, "media/")
         self.UPLOADLINKDIR = os.path.join(self.UPLOADDIR, "urls/")
         self.MAXUPLOADFILES = 1000
         self.SUBMIT_URL = "submit"
 
         # URL settings
-        self.BASEURL = "localhost:8000"
-        self.PREFIX = "/image-service"
+        self.BASEURL = "localhost:" + self.options.port
+        self.PREFIX = "/imageservice"
         self.BASEPREF = self.BASEURL + self.PREFIX + '/'
 
         # info.json settings
@@ -734,7 +774,7 @@ class ImageHandler(BaseHandler):
         self.AUTH_URL_NOACCESS_ID = "no-access"
 
         #self.CLIENT_SECRETS = {}
-        self.CLIENT_SECRETS = {'name1':'secret1'}
+        self.CLIENT_SECRETS = {'name1': 'secret1'}
 
         # Google OAuth2 settings
         self.GOOGLE_API_CLIENT_ID = 'client_id'
@@ -744,23 +784,27 @@ class ImageHandler(BaseHandler):
         self.GOOGLE_OAUTH2_URL = 'https://accounts.google.com/o/oauth2/'
         self.GOOGLE_API_URL = 'https://www.googleapis.com/oauth2/v1/'
 
-        self.formats = {'BMP' : 'image/bmp',
-                   'GIF' : 'image/gif',
-                   'JPEG': 'image/jpeg',
-                   'PCX' : 'image/pcx',
-                   'PDF' :  'application/pdf',
-                   'PNG' : 'image/png',
-                   'TIFF': 'image/tiff',
-                   'WEBP': 'image/webp'}
+        self.formats = {
+            'BMP' : 'image/bmp',
+            'GIF' : 'image/gif',
+            'JPEG': 'image/jpeg',
+            'PCX' : 'image/pcx',
+            'PDF' :  'application/pdf',
+            'PNG' : 'image/png',
+            'TIFF': 'image/tiff',
+            'WEBP': 'image/webp'
+        }
 
-        self.extensions = {'bmp' : 'image/bmp',
-                   'gif' : 'image/gif',
-                   'jpg': 'image/jpeg',
-                   'pcx' : 'image/pcx',
-                   'pdf' :  'application/pdf',
-                   'png' : 'image/png',
-                   'tif' : 'image/tiff',
-                   'webp': 'image/webp'}
+        self.extensions = {
+        'bmp' : 'image/bmp',
+            'gif' : 'image/gif',
+            'jpg': 'image/jpeg',
+            'pcx' : 'image/pcx',
+            'pdf' :  'application/pdf',
+            'png' : 'image/png',
+            'tif' : 'image/tiff',
+            'webp': 'image/webp'
+        }
 
         self.content_types = {}
         for (k,v) in self.extensions.items():
@@ -793,7 +837,7 @@ class ImageHandler(BaseHandler):
     def send_file(self, filename, mt, status=200):
         if not filename.startswith(self.CACHEDIR):
             filename = os.path.join(self.CACHEDIR, filename)
-        fh = open(filename)
+        fh = open(filename, "rb")
         data = fh.read()
         fh.close()
         return self.send(data, status=status, ct=mt)
@@ -805,7 +849,7 @@ class ImageHandler(BaseHandler):
 
     def error(self, status, message=""):
         self.status = status
-        response['content_type'] = 'text/plain'
+        self.set_header("Content-Type", 'text/plain')
         if message:
             return message
         else:
@@ -871,7 +915,12 @@ class ImageHandler(BaseHandler):
                 "profile": [self.compliance,
                     {
                         "formats":["gif","tif","pdf"],
-                        "supports":["regionSquare", "canonicalLinkHeader", "profileLinkHeader", "mirroring", "rotationArbitrary", "sizeAboveFull"],
+                        "supports":["regionSquare", 
+                                    "canonicalLinkHeader", 
+                                    "profileLinkHeader", 
+                                    "mirroring", 
+                                    "rotationArbitrary", 
+                                    "sizeAboveFull"],
                         "qualities":qualities
                     }
                 ]
@@ -928,18 +977,16 @@ class ImageHandler(BaseHandler):
         #else:
         isAuthed = True
         hasToken = True
-
         degraded = False
 
         # http://{server}{/prefix}   /{identifier}/{region}/{size}/{rotation}/{quality}{.format}
         bits = path.split('/')
 
-        #### response['Access-Control-Allow-Origin'] =  '*'
+        ## self.set_header('Access-Control-Allow-Origin', '*')
 
         # Nasty but useful debugging hack
         if len(bits) == 1 and bits[0] == "list":
             return self.send(repr(self.identifiers), status=200, ct="application/json");
-
 
         if bits:
             identifier = bits.pop(0)
@@ -963,18 +1010,17 @@ class ImageHandler(BaseHandler):
         else:
             return self.error_msg("identifier", "Identifier unspecified", status=400)
 
-        response = {}
-        response['Link'] = '<{0}>;rel="profile"'.format(self.compliance)
+        self.set_header("Link", '<{0}>;rel="profile"'.format(self.compliance))
 
         # Early cache check here
         fp = path
         if fp == identifier or fp == "{0}/".format(identifier):
-            response.status = 303
-            response['location'] = "{0}{1}/info.json".format(self.BASEPREF, infoId)
-            return ""
+            self.set_status(303)
+            self.set_header("Link", "{0}{1}/info.json".format(self.BASEPREF, infoId))
+            return
         elif len(fp) > 9 and fp[-9:] == "info.json":
             # Check request headers for application/ld+json
-            inacc = request.headers.get('Accept', '')
+            inacc = self.request.headers.get('Accept', '')
             if inacc.find('ld+json') > -1:
                 mimetype = "application/ld+json"
             else:
@@ -1004,7 +1050,9 @@ class ImageHandler(BaseHandler):
 
         if os.path.exists(self.CACHEDIR + fp):
             # Will only ever be canonical, otherwise would redirect
-            response['Link'] += ', <{0}{1}>;rel="canonical"'.format(self.BASEPREF, fp)
+            self.set_header('Link',  
+                            self.request.headers.get("Link", "") + 
+                            ', <{0}{1}>;rel="canonical"'.format(self.BASEPREF, fp))
             return self.send_file(fp, mimetype)
 
         if bits:
@@ -1013,6 +1061,7 @@ class ImageHandler(BaseHandler):
                 # test for info.json
                 if region == "info.json":
                     # build and return info
+                    inacc = self.request.headers.get('Accept', '')
                     if inacc.find('ld+json') > -1:
                         mt = "application/ld+json"
                     else:
@@ -1098,7 +1147,8 @@ class ImageHandler(BaseHandler):
             try:
                 (x,y,w,h)=region.split(',')
             except:
-                return self.error_msg('region', 'unable to parse region: {0}'.format(region), status=400)
+                return self.error_msg('region', 
+                    'unable to parse region: {0}'.format(region), status=400)
             if x.startswith('pct:'):
                 x = x[4:]
                 # convert pct into px
@@ -1235,10 +1285,11 @@ class ImageHandler(BaseHandler):
         paths = [infoId, c_region, c_size, c_rot, c_qual]
         fn = os.path.join(*paths)
         new_url = self.BASEPREF + fn
-        response['Link'] += ', <{0}>;rel="canonical"'.format(new_url)
-
+        self.set_header('Link',  
+                        self.request.headers.get("Link", "") + 
+                        ', <{0}>;rel="canonical"'.format(new_url))
         if fn != path:
-            response['Location'] = new_url
+            self.set_header('Location', new_url)
             return self.send("", status=301)
 
         # Won't regenerate needlessly as earlier cache check would have found it
@@ -1279,13 +1330,13 @@ class ImageHandler(BaseHandler):
                 segx = image.size[0]
                 segy = image.size[1]
                 angle = radians(rot)
-                rx = abs(segx*cos(angle)) + abs(segy*sin(angle))
-                ry = abs(segy*cos(angle)) + abs(segx*sin(angle))
+                rx = abs(segx * cos(angle)) + abs(segy * sin(angle))
+                ry = abs(segy * cos(angle)) + abs(segx * sin(angle))
 
-                bg = Image.new("RGB", (rx,ry), (0,0,0))
-                tx = int((rx-segx)/2)
-                ty = int((ry-segy)/2)
-                bg.paste(image, (tx,ty,tx+segx,ty+segy))
+                bg = Image.new("RGB", (rx, ry), (0, 0, 0))
+                tx = int((rx - segx)/2)
+                ty = int((ry - segy)/2)
+                bg.paste(image, (tx ,ty, tx + segx, ty + segy))
                 image = bg.rotate(rot)
 
         if quality != 'default':
@@ -1317,93 +1368,6 @@ class ImageHandler(BaseHandler):
 
         return self.send(contents, ct=mimetype)
 
-    def check_auth(self, user, password):
-        # Re-implement me to do actual user/password checking
-        return user == password
-
-    def _get_token(self):
-        # Google OAuth2 helpers
-        params = {
-            'code': request.query.get('code'),
-            'client_id': self.GOOGLE_API_CLIENT_ID,
-            'client_secret': self.GOOGLE_API_CLIENT_SECRET,
-            'redirect_uri': self.GOOGLE_REDIRECT_URI,
-            'grant_type': 'authorization_code',
-        }
-        payload = urllib.parse.urlencode(params)
-        url = self.GOOGLE_OAUTH2_URL + 'token'
-        req = urllib2.Request(url, payload)
-        return json.loads(urllib2.urlopen(req).read())
-
-    def _get_data(self, response):
-        params = {
-            'access_token': response['access_token'],
-        }
-        payload = urllib.parse.urlencode(params)
-        url = self.GOOGLE_API_URL + 'userinfo?' + payload
-        req = urllib2.Request(url)  # must be GET
-        return json.loads(urllib2.urlopen(req).read())
-
-    def login(self):
-        # OAuth starts here. This will redirect User to Google
-        params = {
-            'response_type': 'code',
-            'client_id': self.GOOGLE_API_CLIENT_ID,
-            'redirect_uri': self.GOOGLE_REDIRECT_URI,
-            'scope': self.GOOGLE_API_SCOPE,
-            'state': request.query.get('next'),
-        }
-        url = self.GOOGLE_OAUTH2_URL + 'auth?' + urllib.parse.urlencode(params)
-        response['Access-Control-Allow-Origin'] = '*'
-        redirect(url)
-
-    ##@auth_basic(check_auth)
-    def login_basic(self):
-        auth = request.headers.get('Authorization')
-        email,p = parse_auth(auth)
-        response.set_cookie(self.COOKIE_NAME_ACCOUNT, email, secret=self.COOKIE_SECRET)
-        return self.send("<html><script>window.close();</script></html>", ct="text/html");
-
-    def home(self):
-        # OAuth ends up back here from Google. This sets a cookie and closes window
-        # to trigger next step
-        resp = self._get_token()
-        data = self._get_data(resp)
-
-        first = data.get('given_name', '')
-        last = data.get('family_name', '')
-        email = data.get('email', '')
-        name = data.get('name', '')
-        pic = data.get('picture', '')
-        response.set_cookie(self.COOKIE_NAME_ACCOUNT, email, secret=self.COOKIE_SECRET)
-        return self.send("<html><script>window.close();</script></html>", ct="text/html");
-
-    def get_iiif_token(self):
-        # This is the next step -- client requests a token to send to info.json
-        # We're going to just copy it from our cookie.
-        # JSONP request to get the token to send to info.json in Auth'z header
-
-        callbackFn = request.query.get('callback', '')
-        authcode = request.query.get('code', '')
-        account = ''
-        try:
-            account = request.get_cookie(self.COOKIE_NAME_ACCOUNT, secret=self.COOKIE_SECRET)
-            response.delete_cookie(self.COOKIE_NAME_ACCOUNT)
-        except:
-            pass
-        if not account:
-            data = {"error":"missingCredentials","description": "No login details received"}
-        else:
-            data = {"accessToken":account, "tokenType": "Bearer", "expiresIn": 3600}
-            # Set the cookie for the image content
-            response.set_cookie(self.COOKIE_NAME, account, secret=self.COOKIE_SECRET)
-        dataStr = json.dumps(data)
-
-        if callbackFn:
-            return self.send("{0}({1});".format(callbackFn, dataStr), ct="application/javascript")
-        else:
-            return self.send(dataStr, ct="application/json")
-
     def noaccess(self):
         noacc = {"@context": "http://iiif.io/api/image/2/context.json",
                  "@id": self.BASEPREF + "no-access",
@@ -1413,22 +1377,16 @@ class ImageHandler(BaseHandler):
                  "service": {"@context": "http://iiif.io/api/auth/1/context.json",
                              "@id": self.BASEPREF + "login",
                              "profile": "iiif:auth-service"}}
-        response['Access-Control-Allow-Origin'] = '*'
+        self.set_header('Access-Control-Allow-Origin', '*')
         return self.send(json.dumps(noacc), ct="application/json")
-
-    def logout(self):
-        response.delete_cookie(self.COOKIE_NAME_ACCOUNT)
-        response.delete_cookie(self.COOKIE_NAME)
-        response['Access-Control-Allow-Origin'] = '*'
-        return self.send("<html><script>window.close();</script></html>", status=401, ct="text/html");
 
     def get_client_code(self):
         # will be POSTED:
         # {'clientId': x, 'clientSecret': y}
         if not self.CLIENT_SECRETS:
-            abort(404)
+            raise Abort404("invalid request")
 
-        bod = request.body.read()
+        bod = self.request.body
         js = json.loads(bod)
         name = js['clientId']
         secret = js['clientSecret']
@@ -1440,10 +1398,10 @@ class ImageHandler(BaseHandler):
         return self.send(dataStr, ct="application/json")
 
     def handle_submit(self):
-        imgurl = request.query.get('url', '')
+        imgurl = self.get_query_argument('url', '')
         if not imgurl:
             # Need a url
-            abort(400, "Missing required parameter: url")
+            raise Abort400("Missing required parameter: url")
 
         # cache check
         md = hashlib.md5(imgurl)
@@ -1452,10 +1410,10 @@ class ImageHandler(BaseHandler):
         if not done:
             # fetch URL
             fh = urllib.parse.urlopen(imgurl)
-            ct = fh.headers['content-type']
+            ct = fh.headers['Content-Type']
             if ct.find('image/') == -1:
                 # Not an image!
-                abort(400, "That resource is not an image")
+                raise Abort400("That resource is not an image")
             data = fh.read()
             fh.close()
 
@@ -1468,7 +1426,7 @@ class ImageHandler(BaseHandler):
             ext = self.content_types.get(ct, 'jpg')
             filename = "{0}.{1}".format(imgid, ext)
             fn = os.path.join(self.UPLOADDIR, filename)
-            fh = open(fn, 'w')
+            fh = open(fn, 'wb')
             fh.write(data)
             fh.close()
 
@@ -1480,4 +1438,4 @@ class ImageHandler(BaseHandler):
                 os.remove(os.path.join(self.UPLOADDIR, ofiles[0]))
 
         link = self.BASEPREF + imgid
-        redirect(link+'/info.json')
+        redirect(link + '/info.json')
