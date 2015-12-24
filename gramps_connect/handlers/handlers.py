@@ -21,9 +21,6 @@
 import tornado.web
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
-from gramps.gen.dbstate import DbState
-
-db = DbState().open_database("Gramps Connect")
 
 template_functions = {}
 exec("from gramps_connect.template_functions import *", 

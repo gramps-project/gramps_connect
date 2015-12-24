@@ -21,6 +21,8 @@
 ## Based on: 
 ## https://github.com/IIIF/image-api/blob/master/implementations/pi3f/pi3f_21.py
 
+import tornado
+
 import os
 import json
 import urllib
@@ -90,7 +92,6 @@ class ImageFile(object):
     def process(self, ir):
         image = self.open()
         cf = self.config
-
         if self.identifier.value.endswith(cf.DEGRADED_IDENTIFIER):
             if cf.DEGRADED_SIZE > 0:
                 # resize max size
@@ -714,28 +715,29 @@ class Config(object):
 
 class ImageHandler(BaseHandler):
     def __init__(self, *args, **kwargs):
+        """
+        Extra keywords:
+        
+        HOMEDIR - home for imageserver cache, etc.
+        PORT -
+        """
         # File path settings
-        if "HOMEDIR" in kwargs:
-            HOMEDIR = kwargs["HOMEDIR"]
-            del kwargs["HOMEDIR"]
-        else:
-            raise Exception("ImageHandler needs a HOMEDIR")
-
+        for name in ["HOMEDIR", "PORT", "HOSTNAME", "GET_IMAGE_FN"]:
+            if name in kwargs:
+                setattr(self, name, kwargs[name])
+                del kwargs[name]
+            else:
+                raise Exception("ImageHandler needs '%s'" % name)
         super().__init__(*args, **kwargs)
-        ## , BASEURL, HOMEDIR, FILEDIRS, CACHEDIR, UPLOADDIR):
 
-        FILEDIRS = [
-            os.path.join(HOMEDIR, "media/")
-        ]
-        IMAGEFMTS = ['png', 'jpg', 'tif']
-        self.CACHEDIR = os.path.join(HOMEDIR, "cache/")
-        self.UPLOADDIR = os.path.join(HOMEDIR, "media/")
+        self.CACHEDIR = os.path.join(self.HOMEDIR, "cache/")
+        self.UPLOADDIR = os.path.join(self.HOMEDIR, "media/")
         self.UPLOADLINKDIR = os.path.join(self.UPLOADDIR, "urls/")
         self.MAXUPLOADFILES = 1000
         self.SUBMIT_URL = "submit"
 
         # URL settings
-        self.BASEURL = "localhost:" + self.options.port
+        self.BASEURL = self.HOSTNAME + str(self.PORT)
         self.PREFIX = "/imageservice"
         self.BASEPREF = self.BASEURL + self.PREFIX + '/'
 
@@ -761,9 +763,6 @@ class ImageHandler(BaseHandler):
         # self.AUTH_TYPE = "basic"
         # self.AUTH_TYPE = "oauth"
         self.AUTH_TYPE = ""
-        self.COOKIE_NAME = "loggedin"
-        self.COOKIE_NAME_ACCOUNT = "account"
-        self.COOKIE_SECRET = "abc-123-*&^"
         self.DEGRADED_IDENTIFIER = "-degraded"
 
         self.AUTH_URL_LOGIN = "login"
@@ -821,18 +820,7 @@ class ImageHandler(BaseHandler):
 
         # encoding param for PIL
         self.jpegQuality = 90
-
-        # And make our list of identifiers
         self.identifiers = {}
-        fns = []
-        for fd in FILEDIRS:
-            for fmt in IMAGEFMTS:
-                fns.extend(glob.glob(fd + "*" + fmt))
-
-        for fn in fns:
-            (d, f) = os.path.split(fn)
-            f = f[:-4]
-            self.identifiers[f] = fn
 
     def send_file(self, filename, mt, status=200):
         if not filename.startswith(self.CACHEDIR):
@@ -861,15 +849,31 @@ class ImageHandler(BaseHandler):
         self.finish(text)
 
     def get_image_file(self, identifier):
+        """
+        Given an image identifier, return the full path/filename.
+        Side-effect: cache the identifier -> path/filename.
+        """
+        path = ""
         if identifier in self.identifiers:
-            return self.identifiers[identifier]
+            path = self.identifiers[identifier]
+        elif self.GET_IMAGE_FN:
+            path = self.GET_IMAGE_FN(identifier)
         else:
-            fns = glob.glob(os.path.join(self.UPLOADDIR, identifier) + '.*')
-            if fns:
-                self.identifiers[identifier] = fns[0]
-                return fns[0]
-            else:
-                return ""
+            path = self.get_image_file_from_filesystem(identifier)
+        # cache it:
+        if path:
+            self.identifiers[identifier] = path
+        return path
+
+    def get_image_file_from_filesystem(self, identifier):
+        """
+        Given an image identifier in UPLOADDIR, return the full path/filename.
+        """
+        fns = glob.glob(os.path.join(self.UPLOADDIR, identifier) + '.*')
+        if fns:
+            return fns[0]
+        else:
+            return ""
 
     def make_info(self, infoId, image):
         (imageW, imageH) = image.size
@@ -968,7 +972,22 @@ class ImageHandler(BaseHandler):
         # Do watermarking here
         return image
 
+    @tornado.web.authenticated
     def get(self, path):
+        """
+        Path is an IIIF image server set of parameters:
+
+        /identifier/region/scale/format.type
+
+        Example: 
+
+          identifier - filename or handle
+          region - full, or x1,y1,x2,y2
+          scale - width, or width,height
+          format - default, ...
+          type - jpg, gif, or tiff
+
+        """
         # First check auth
         #if self.DEGRADE_IMAGES:
         #    isAuthed = request.get_cookie(self.COOKIE_NAME, secret=self.COOKIE_SECRET)

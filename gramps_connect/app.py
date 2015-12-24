@@ -31,11 +31,19 @@ import tornado.log
 
 ## Gramps imports
 import gramps.gen.const # initializes locale
+from gramps.gen.dbstate import DbState
+from gramps.gen.utils.file import media_path_full
+
+## Gramps Connect imports
 from gramps_connect.handlers import *
 
 ## Command-line configuration options:
+define("hostname", default="localhost", 
+       help="Name of host Gramps Connect server is running on", type=str)
 define("port", default=8000, 
        help="Run Gramps Connect server on the given port", type=int)
+define("database", default=None, 
+       help="The Gramps Family Tree to serve", type=str)
 define("debug", default=False, 
        help="Tornado debug", type=bool)
 define("xsrf", default=True, 
@@ -59,7 +67,10 @@ class GrampsConnect(Application):
             url(r'/logout', LogoutHandler, name="logout"),
             url(r'/person/(.*)', PersonHandler, name="person"),
             url(r'/imageserver/(.*)', ImageHandler, 
-                {"HOMEDIR": self.options.home_dir},
+                {"HOMEDIR": self.options.home_dir,
+                 "PORT": self.options.port,
+                 "HOSTNAME": self.options.hostname,
+                 "GET_IMAGE_FN": self.get_image_path_from_handle},
                 name="imageserver", 
             ),
             url(r"/styles/(.*)", StaticFileHandler, 
@@ -67,6 +78,10 @@ class GrampsConnect(Application):
             url(r"/images/(.*)", StaticFileHandler, 
                 {'path': gramps.gen.const.IMAGE_DIR}),
         ], **settings)
+        if self.options.database is None:
+            raise Exception("Need to specify Gramps Family Tree name with --database='NAME'")
+        else:
+            self.database = DbState().open_database(self.options.database)
 
     def default_settings(self):
         """
@@ -83,6 +98,15 @@ class GrampsConnect(Application):
             'debug':         self.options.debug,
             "xsrf_cookies":  self.options.xsrf,
         }
+
+    def get_image_path_from_handle(self, identifier):
+        """
+        Given an image handle, return the full path/filename.
+        """
+        media = self.database.get_object_from_handle(identifier)
+        if media:
+            return media_path_full(self.database, media.get_path())
+        return ""
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
