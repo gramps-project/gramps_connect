@@ -1,6 +1,10 @@
-# gramps_connect
+# Gramps Connect
 
-Gramps Connect is a web-based application for geneaology
+Gramps Connect is a web-based application for geneaology. It uses the Gramps API for data, reports, import/export, etc.
+
+* Designed for collaboration and large databases
+* Multi-user, password protected
+* Support IIIF Image Server API - http://iiif.io/api/image/2.1/
 
 Requirements
 ------------
@@ -8,7 +12,7 @@ Requirements
 * Python3
 * tornado
 * PIL
-* gramps 5.0
+* gramps >= 5.0
 
 Running
 -------
@@ -24,6 +28,7 @@ Common Flags
 * --port
 * --hostname
 * --database
+* --sitename
 
 Common variations
 -----------------
