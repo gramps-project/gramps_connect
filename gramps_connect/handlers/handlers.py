@@ -30,7 +30,7 @@ exec("from gramps_connect.template_functions import *",
 
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
-        for name in ["database"]:
+        for name in ["database", "sitename"]:
             if name in kwargs:
                 setattr(self, name, kwargs[name])
                 del kwargs[name]
@@ -51,7 +51,7 @@ class BaseHandler(tornado.web.RequestHandler):
             "action": "", 
             "menu": [], 
             "user": self.current_user, 
-            "sitename": "SITENAME",
+            "sitename": self.sitename,
             "css_theme": "Web_Mainz.css",
             "gramps_version": "5.0",
             "messages": [],

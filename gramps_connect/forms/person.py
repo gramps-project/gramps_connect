@@ -23,8 +23,9 @@ class Form(object):
             method = getattr(self.database, function)
         label = self.instance.get_label(field)
         if method:
-            obj = method(item)
-            item = getattr(obj, attr)
+            obj = method(label)
+            label = getattr(obj, attr)
+        return label
 
     def render(self, field, action, user, js=None, link=None, *args, **kwargs):
         method = None

@@ -38,17 +38,19 @@ from gramps.gen.utils.file import media_path_full
 from .handlers import *
 
 ## Command-line configuration options:
-define("hostname", default="localhost", 
+define("hostname", default="localhost",
        help="Name of host Gramps Connect server is running on", type=str)
-define("port", default=8000, 
+define("port", default=8000,
        help="Run Gramps Connect server on the given port", type=int)
-define("database", default=None, 
+define("database", default=None,
        help="The Gramps Family Tree to serve", type=str)
-define("debug", default=False, 
+define("sitename", default="Gramps Connect",
+       help="Name to appear on all pages", type=str)
+define("debug", default=False,
        help="Tornado debug", type=bool)
-define("xsrf", default=True, 
+define("xsrf", default=True,
        help="Use xsrf cookie", type=bool)
-define("base_dir", default=None, 
+define("base_dir", default=None,
        help="Base directory (where static, templates, etc. are)", type=str)
 define("home_dir", default=None,
        help="Home directory for media", type=str)
@@ -65,24 +67,47 @@ class GrampsConnect(Application):
             raise Exception("Need to specify Gramps Family Tree name with --database='NAME'")
         else:
             self.database = DbState().open_database(self.options.database)
+        self.sitename = self.options.sitename
         super().__init__([
-            url(r"/", MainHandler, name="main"),
-            url(r'/login', LoginHandler, name="login"),
-            url(r'/logout', LogoutHandler, name="logout"),
-            url(r'/person/(.*)', PersonHandler, 
-                {"database": self.database},
+            url(r"/", MainHandler,
+                {
+                    "sitename": self.sitename,
+                },
+                name="main"),
+            url(r'/login', LoginHandler,
+                {
+                    "sitename": self.sitename,
+                },
+                name="login"),
+            url(r'/logout', LogoutHandler,
+                {
+                    "sitename": self.sitename,
+                },
+                name="logout"),
+            url(r'/person/(.*)', PersonHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                },
                 name="person"),
-            url(r'/imageserver/(.*)', ImageHandler, 
-                {"HOMEDIR": self.options.home_dir,
-                 "PORT": self.options.port,
-                 "HOSTNAME": self.options.hostname,
-                 "GET_IMAGE_FN": self.get_image_path_from_handle},
-                name="imageserver", 
+            url(r'/imageserver/(.*)', ImageHandler,
+                {
+                    "HOMEDIR": self.options.home_dir,
+                    "PORT": self.options.port,
+                    "HOSTNAME": self.options.hostname,
+                    "GET_IMAGE_FN": self.get_image_path_from_handle,
+                    "sitename": self.sitename,
+                },
+                name="imageserver",
             ),
-            url(r"/styles/(.*)", StaticFileHandler, 
-                {'path': gramps.gen.const.DATA_DIR}),
-            url(r"/images/(.*)", StaticFileHandler, 
-                {'path': gramps.gen.const.IMAGE_DIR}),
+            url(r"/styles/(.*)", StaticFileHandler,
+                {
+                    'path': gramps.gen.const.DATA_DIR,
+                }),
+            url(r"/images/(.*)", StaticFileHandler,
+                {
+                    'path': gramps.gen.const.IMAGE_DIR,
+                }),
         ], **settings)
 
     def default_settings(self):
