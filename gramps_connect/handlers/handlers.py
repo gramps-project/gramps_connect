@@ -99,7 +99,7 @@ class PersonHandler(BaseHandler):
     def get(self, user):
         person = self.database.get_person_from_gramps_id("I0000")
         person.probably_alive = True
-        self.render("view_person_detail.html", 
+        self.render("person.html", 
                     **self.get_template_dict(tview="person", 
                                              form=PersonForm(self.database, person),
                                              logform=None))
