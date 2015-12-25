@@ -22,12 +22,18 @@ import tornado.web
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
 
+from ..forms.person import PersonForm
+
 template_functions = {}
 exec("from gramps_connect.template_functions import *", 
      globals(), template_functions)
 
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
+        for name in ["database"]:
+            if name in kwargs:
+                setattr(self, name, kwargs[name])
+                del kwargs[name]
         super().__init__(*args, **kwargs)
         self._ = _
 
@@ -91,9 +97,9 @@ class LogoutHandler(BaseHandler):
 class PersonHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, user):
-        person = db.get_person_from_gramps_id("I0000")
+        person = self.database.get_person_from_gramps_id("I0000")
         person.probably_alive = True
         self.render("view_person_detail.html", 
                     **self.get_template_dict(tview="person", 
-                                             person=person,
+                                             form=PersonForm(self.database, person),
                                              logform=None))

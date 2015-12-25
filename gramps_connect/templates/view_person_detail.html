@@ -32,48 +32,48 @@
   {% end %}
 <form method="post">{% module xsrf_form_html() %}
 <tr>
- <td colspan="4" id="subtitle">{{ nd(person) }}</td>
- <td class="ColumnAttribute">{{ _("Name type") }}:</td>
- <td class="ColumnValue" id="data">{{ render("person.primary_name.type", person.get_primary_name().type.string, action) }}</td>
+ <td colspan="4" id="subtitle">{{ form.describe() }}</td>
+ <td class="ColumnAttribute">{{ form.get_label("primary_name.type") }}:</td>
+ <td class="ColumnValue" id="data">{{ form.render("primary_name.type", action, user) }}</td>
 </tr>
 <tr><td id="rowspace"></td></tr>
 <tr>
- <td class="ColumnAttribute">{# nameform.title.label #}:</td>
- <td class="ColumnValue" id="data">{# render nameform.title user action "get_focus" #}</td>
- <td class="ColumnAttribute">{# nameform.nick.label #}:</td>
- <td class="ColumnValue" id="data">{# render nameform.nick user action #}</td>
- <td class="ColumnAttribute">{# nameform.call.label #}:</td>
- <td class="ColumnValue" id="data">{# render nameform.call user action #}</td>
+ <td class="ColumnAttribute">{{ form.get_label("primary_name.title") }}:</td>
+ <td class="ColumnValue" id="data">{{ form.render("primary_name.title", user, action, "get_focus") }}</td>
+ <td class="ColumnAttribute">{{ form.get_label("primary_name.nick") }}:</td>
+ <td class="ColumnValue" id="data">{{ form.render("primary_name.nick", user, action) }}</td>
+ <td class="ColumnAttribute">{{ form.get_label("primary_name.call") }}:</td>
+ <td class="ColumnValue" id="data">{{ form.render("primary_name.call", user, action) }}</td>
 </tr>
 <tr><td id="rowspace"></td></tr>
 <tr>
- <td class="ColumnAttribute">{# nameform.first_name.label #}:</td>
- <td class="ColumnValue" id="data" colspan="4">{# render nameform.first_name user action None "/person/?search=given%%3D%s" nameform.model.first_name #}</td>
- <td class="ColumnValue" id="data">{# render nameform.suffix user action #}</td>
+ <td class="ColumnAttribute">{{ form.get_label("primary_name.first_name") }}:</td>
+ <td class="ColumnValue" id="data" colspan="4">{{ form.render("primary_name.first_name", user, action, None, "/person/?search=given%%3D%s", form.get("primary_name.first_name")) }}</td>
+ <td class="ColumnValue" id="data">{{ form.render("primary_name.suffix", user, action) }}</td>
 </tr>
 <tr><td id="rowspace"></td></tr>
 <tr>
- <td class="ColumnAttribute">{# surnameform.surname.label #}:</td>
- <td class="ColumnValue" id="data">{# render surnameform.prefix user action #}
- <td class="ColumnValue" id="data" colspan="2">{# render surnameform.surname user action None "/person/?search=surname%%3D%s" surnameform.model.surname #}</td>
- <td class="ColumnAttribute">{# surnameform.name_origin_type.label #}:</td>
- <td class="ColumnValue" id="data" colspan="2">{# render surnameform.name_origin_type user action #}</td>
+ <td class="ColumnAttribute">{{ form.get_label("primary_name.surname_list.0.prefix") }}:</td>
+ <td class="ColumnValue" id="data">{{ form.render("primary_name.surname_list.0.prefix", user, action) }}
+ <td class="ColumnValue" id="data" colspan="2">{{ form.render("primary_name.surname_list.0.surname", user, action, None, "/person/?search=surname%%3D%s", form.get("primary_name.surname_list.0.surname")) }}</td>
+ <td class="ColumnAttribute">{{ form.get_label("primary_name.surname_list.0.origintype") }}:</td>
+ <td class="ColumnValue" id="data" colspan="2">{{ form.render("primary_name.surname_list.0.origintype", user, action) }}</td>
 </tr>
 <tr><td id="rowspace"></td></tr>
 <tr>
- <td class="ColumnAttribute">{# personform.gender_type.label #}:</td>
- <td class="ColumnValue" id="data">{# render personform.gender_type user action None "/person/?search=gender%%3D%s" personform.model.gender_type_id #}</td>
- <td class="ColumnAttribute">{# personform.gramps_id.label #}:</td>
- <td class="ColumnValue" id="data">{# render personform.gramps_id user action #}</td>
- <td class="ColumnAttribute">{# personform.tags.label #}:</td>
- <td class="ColumnValue" id="data" rowspan="3">{# render personform.tags user action #}</td>
+ <td class="ColumnAttribute">{{ form.get_label("gender") }}:</td>
+ <td class="ColumnValue" id="data">{{ form.render("gender", user, action, None, "/person/?search=gender%%3D%s", form.get("gender")) }}</td>
+ <td class="ColumnAttribute">{{ form.get_label("gramps_id") }}:</td>
+ <td class="ColumnValue" id="data">{{ form.render("gramps_id", user, action) }}</td>
+ <td class="ColumnAttribute">{{ form.get_label("tag_list") }}:</td>
+ <td class="ColumnValue" id="data" rowspan="3">{{ form.render("tag_list:get_tag_from_handle:name", user, action) }}</td>
 </tr>
 <tr><td id="rowspace"></td></tr>
 <tr>
- <td class="ColumnAttribute">{# personform.private.label #}:</td>
- <td class="ColumnValue" id="data">{# render personform.private user action #}</td>
- <td class="ColumnAttribute">{# personform.probably_alive.label #}:</td>
- <td class="ColumnValue" id="data">{% if person.probably_alive %}Yes{% else %}No{% end %}</td>
+ <td class="ColumnAttribute">{{ form.get_label("private") }}:</td>
+ <td class="ColumnValue" id="data">{{ form.render("private", user, action) }}</td>
+ <td class="ColumnAttribute">{{ form.get_label("probably_alive") }}:</td>
+ <td class="ColumnValue" id="data">{% if form.probably_alive() %}Yes{% else %}No{% end %}</td>
 </tr>
 </tbody>
 </table>
@@ -89,7 +89,7 @@
 
 {% if user %}
   {% if action == "edit" %}
-    {{ make_button("Cancel", "/person/%(handle)s", handle=person.handle) }}
+    {{ make_button("Cancel", "/person/%(handle)s", handle=form.get("handle")) }}
     <input type="hidden" name="action" value="save"/>
     <input type="hidden" name="search" value="{# search #}"/>
     <input type="hidden" name="page" value="{# page #}"/>
@@ -104,8 +104,8 @@
     {% else %}
       <div style="background-color: lightgray; padding: 2px 0px 0px 2px; clear: both;">
       {{ make_button(_("Add Person"), "/person/add", icon="+") }}
-      {{ make_button(_("Edit Person"), "/person/%(handle)s/edit", icon="?", handle=person.handle) }}
-      {{ make_button(_("Delete Person"), "/person/%(handle)s/delete", icon="-", handle=person.handle) }}
+      {{ make_button(_("Edit Person"), "/person/%(handle)s/edit", icon="?", handle=form.get("handle")) }}
+      {{ make_button(_("Delete Person"), "/person/%(handle)s/delete", icon="-", handle=form.get("handle")) }}
       </div>
     {% end %}
   {% end %}

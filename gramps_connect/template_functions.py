@@ -1,6 +1,3 @@
-from gramps.gen.display.name import NameDisplay
-
-nd = NameDisplay().display
 
 def make_button(text, url, **kwargs):
     if "icon" in kwargs:
@@ -23,5 +20,3 @@ def make_button(text, url, **kwargs):
         return """<a href="%(url)s">%(text)s</a>""" % {"url": url % kwargs, 
                                                        "text": text}
 
-def render(name, value, action, javascript=None):
-    return value

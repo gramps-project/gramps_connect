@@ -35,7 +35,7 @@ from gramps.gen.dbstate import DbState
 from gramps.gen.utils.file import media_path_full
 
 ## Gramps Connect imports
-from gramps_connect.handlers import *
+from .handlers import *
 
 ## Command-line configuration options:
 define("hostname", default="localhost", 
@@ -61,11 +61,17 @@ class GrampsConnect(Application):
         self.options = options
         if settings is None:
             settings = self.default_settings()
+        if self.options.database is None:
+            raise Exception("Need to specify Gramps Family Tree name with --database='NAME'")
+        else:
+            self.database = DbState().open_database(self.options.database)
         super().__init__([
             url(r"/", MainHandler, name="main"),
             url(r'/login', LoginHandler, name="login"),
             url(r'/logout', LogoutHandler, name="logout"),
-            url(r'/person/(.*)', PersonHandler, name="person"),
+            url(r'/person/(.*)', PersonHandler, 
+                {"database": self.database},
+                name="person"),
             url(r'/imageserver/(.*)', ImageHandler, 
                 {"HOMEDIR": self.options.home_dir,
                  "PORT": self.options.port,
@@ -78,10 +84,6 @@ class GrampsConnect(Application):
             url(r"/images/(.*)", StaticFileHandler, 
                 {'path': gramps.gen.const.IMAGE_DIR}),
         ], **settings)
-        if self.options.database is None:
-            raise Exception("Need to specify Gramps Family Tree name with --database='NAME'")
-        else:
-            self.database = DbState().open_database(self.options.database)
 
     def default_settings(self):
         """
