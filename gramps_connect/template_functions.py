@@ -207,8 +207,8 @@ def event_table(form, user, action, url, **kwargs):
 	
 }</style>"""
     if action == "view":
-        retval += make_button(_("+Add New Event"), (url % kwargs)) # .replace("$act", "add"))
-        retval += make_button(_("$Add Existing Event"), (url % kwargs)) # .replace("$act", "share"))
+        retval += make_button(form._("Add New Event"), (url % kwargs), icon="+") # .replace("$act", "add"))
+        retval += make_button(form._("Add Existing Event"), (url % kwargs), icon="$") # .replace("$act", "share"))
     else:
         retval += """<div style="height: 26px;"></div>""" # to keep tabs same height
     retval += """</div>"""

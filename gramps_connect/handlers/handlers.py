@@ -48,8 +48,8 @@ class BaseHandler(tornado.web.RequestHandler):
  
     def get_template_dict(self, **kwargs):
         dict = {
-            "action": "", 
             "menu": [], 
+            "action": "", 
             "user": self.current_user, 
             "sitename": self.sitename,
             "css_theme": "Web_Mainz.css",
@@ -96,10 +96,20 @@ class LogoutHandler(BaseHandler):
 
 class PersonHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self, user):
-        person = self.database.get_person_from_gramps_id("I0000")
-        person.probably_alive = True
-        self.render("person.html", 
-                    **self.get_template_dict(tview="person", 
-                                             form=PersonForm(self.database, person, _),
-                                             logform=None))
+    def get(self, path):
+        if "/" in path:
+            handle, action= path.split("/", 1)
+        else:
+            handle, action = path, "view"
+        person = self.database.get_person_from_handle(handle)
+        if person:
+            person.probably_alive = True
+            self.render("person.html", 
+                        **self.get_template_dict(tview="person", 
+                                                 action=action,
+                                                 form=PersonForm(self.database, person, _),
+                                                 logform=None))
+        else:
+            self.clear()
+            self.set_status(404)
+            self.finish("<html><body>No such person</body></html>")
