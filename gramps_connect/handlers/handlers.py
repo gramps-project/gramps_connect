@@ -101,5 +101,5 @@ class PersonHandler(BaseHandler):
         person.probably_alive = True
         self.render("person.html", 
                     **self.get_template_dict(tview="person", 
-                                             form=PersonForm(self.database, person),
+                                             form=PersonForm(self.database, person, _),
                                              logform=None))

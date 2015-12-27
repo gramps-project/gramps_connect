@@ -7,11 +7,12 @@ nd = NameDisplay().display
 class Form(object):
     """
     """
-    def __init__(self, database, instance):
+    def __init__(self, database, instance, _):
         # scheme is a map from FIELD to Python Type, list[Gramps objects], or Handle
         self.database = database
         self.schema = self._class.get_schema()
         self.instance = instance
+        self._ = _
 
     def describe(self):
         raise Exception("not implemented")
@@ -21,7 +22,7 @@ class Form(object):
         if ":" in field:
             field, function, attr = field.split(":", 2)
             method = getattr(self.database, function)
-        label = self.instance.get_label(field)
+        label = self.instance.get_label(field, self._)
         if method:
             obj = method(label)
             label = getattr(obj, attr)

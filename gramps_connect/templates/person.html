@@ -96,7 +96,7 @@
     <input type="submit" value="Save"/>
   {% else %}
     {% if action == "add" %}
-      {# make_button "Cancel" "/person/" args #}
+      {{ make_button(_("Cancel"), "/person/") }}
       <input type="hidden" name="action" value="create"/>
       <input type="hidden" name="search" value="{# search #}"/>
       <input type="hidden" name="page" value="{# page #}"/>
@@ -131,7 +131,7 @@
   </ul>
   <div class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="tab-events" style="background-color: #f4f0ec;"> 
     <!-- Events -->
-    {# event_table person user action "/event/$act/person/%s" person.handle #}
+    {{ event_table(form, user, action, "/event/$act/person/%(handle)s", handle=form.instance.handle) }}
   </div>
   <div class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide" id="tab-names" style="background-color: #f4f0ec;"> 
     {# name_table person user action "/person/%s/name" person.handle #}
