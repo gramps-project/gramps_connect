@@ -35,7 +35,9 @@ setup(name='gramps_connect',
                          "gramps_connect/templates/login.html",
                      ])],
       classifiers=[
-          'License :: OSI Approved :: BSD License',
+          "Environment :: Web Environment",
+          "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
           'Programming Language :: Python :: 3',
+          "Topic :: Sociology :: Genealogy",
       ]
 )
