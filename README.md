@@ -1,6 +1,6 @@
 # Gramps Connect
 
-Gramps Connect is a web-based application for geneaology. It uses the Gramps API for data, reports, import/export, etc.
+Gramps Connect is a web-based application for genealogy. It uses the Gramps API for data, reports, import/export, etc.
 
 * Designed for collaboration and large databases
 * Multi-user, password protected
