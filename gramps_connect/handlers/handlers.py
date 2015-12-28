@@ -97,6 +97,11 @@ class LogoutHandler(BaseHandler):
 class PersonHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, path):
+        """
+        HANDLE
+        HANDLE/edit|view|delete|save|confirm
+        b2cfa6ca1e174b1f63d/remove/eventref/1
+        """
         if "/" in path:
             handle, action= path.split("/", 1)
         else:

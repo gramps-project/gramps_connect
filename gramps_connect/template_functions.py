@@ -30,6 +30,8 @@ def make_button(text, url, **kwargs):
             img_src = "/images/text-editor.png"
         elif kwargs["icon"] == "-":
             img_src = "/images/gtk-remove.png"
+        elif kwargs["icon"] == "$":
+            img_src = "/images/stock_index_24.png"
         else:
             raise Exception("invalid icon: %s" % kwargs["icon"])
         return ("""<img height="22" width="22" alt="%(text)s" title="%(text)s" 

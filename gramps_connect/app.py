@@ -35,7 +35,7 @@ from gramps.gen.dbstate import DbState
 from gramps.gen.utils.file import media_path_full
 
 ## Gramps Connect imports
-from .handlers import *
+from gramps_connect.handlers import *
 
 ## Command-line configuration options:
 define("hostname", default="localhost",
@@ -138,6 +138,16 @@ class GrampsConnect(Application):
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     tornado.log.logging.info("Gramps Connect starting...")
+    if options.debug:
+        import tornado.autoreload
+        tornado.log.logging.info("Debug mode...")
+        directory = os.path.realpath(".")
+        template_directory = os.path.join(directory, 'gramps_connect', 'templates')
+        for dirpath, dirnames, filenames in os.walk(template_directory):
+            for filename in filenames:
+                template_filename = os.path.join(dirpath, filename)
+                tornado.log.logging.info("   watching: " + os.path.relpath(template_filename))
+                tornado.autoreload.watch(template_filename)
     GrampsConnect(options).listen(options.port)
     try:
         tornado.ioloop.IOLoop.current().start()
