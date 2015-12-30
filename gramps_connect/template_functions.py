@@ -22,7 +22,7 @@ from gramps.plugins.lib.libhtml import Html
 from gramps.gen.lib import *
 from gramps.gen.lib.struct import Struct
 
-def make_button(text, url, **kwargs):
+def make_button(text, link, **kwargs):
     if "icon" in kwargs:
         if kwargs["icon"] == "+":
             img_src = "/images/add.png"
@@ -36,13 +36,13 @@ def make_button(text, url, **kwargs):
             raise Exception("invalid icon: %s" % kwargs["icon"])
         return ("""<img height="22" width="22" alt="%(text)s" title="%(text)s" 
      src="%(img_src)s" onmouseover="buttonOver(this)" onmouseout="buttonOut(this)" 
-     onclick="document.location.href='%(url)s'" 
+        onclick="document.location.href='%(link)s'" 
      style="background-color: lightgray; border: 1px solid lightgray; border-radius:5px; margin: 0px 1px; padding: 1px;" />
-""") % {"url": url % kwargs, 
+""") % {"link": link % kwargs, 
         "img_src": img_src,
         "text": text}
     else:
-        return """<a href="%(url)s">%(text)s</a>""" % {"url": url % kwargs, 
+        return """<a href="%(link)s">%(text)s</a>""" % {"link": link % kwargs, 
                                                        "text": text}
 
 def nbsp(string):
@@ -120,7 +120,7 @@ class Table(object):
         html += table
         return str(html).replace("&amp;nbsp;", "&nbsp;")
 
-def event_table(form, user, action, url, **kwargs):
+def event_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-events"
@@ -209,8 +209,8 @@ def event_table(form, user, action, url, **kwargs):
 	
 }</style>"""
     if action == "view":
-        retval += make_button(form._("Add New Event"), (url % kwargs), icon="+") # .replace("$act", "add"))
-        retval += make_button(form._("Add Existing Event"), (url % kwargs), icon="$") # .replace("$act", "share"))
+        retval += make_button(form._("Add New Event"), (link % kwargs), icon="+") # .replace("$act", "add"))
+        retval += make_button(form._("Add Existing Event"), (link % kwargs), icon="$") # .replace("$act", "share"))
     else:
         retval += """<div style="height: 26px;"></div>""" # to keep tabs same height
     retval += """</div>"""

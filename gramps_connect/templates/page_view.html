@@ -1,0 +1,4 @@
+{% autoescape None %}
+{% extends "view_page_detail.html" %}
+
+{{ for row in form.get_page(start, limit) }}

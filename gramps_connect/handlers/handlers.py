@@ -49,7 +49,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_template_dict(self, **kwargs):
         dict = {
             "menu": [], 
-            "action": "", 
+            "action": "view", 
             "user": self.current_user, 
             "sitename": self.sitename,
             "css_theme": "Web_Mainz.css",
@@ -106,14 +106,20 @@ class PersonHandler(BaseHandler):
             handle, action= path.split("/", 1)
         else:
             handle, action = path, "view"
-        person = self.database.get_person_from_handle(handle)
-        if person:
-            person.probably_alive = True
-            self.render("person.html", 
-                        **self.get_template_dict(tview="person", 
-                                                 action=action,
-                                                 form=PersonForm(self.database, person, _),
-                                                 logform=None))
+        if handle:
+            person = self.database.get_person_from_handle(handle)
+            if person:
+                person.probably_alive = True
+                self.render("person.html", 
+                            **self.get_template_dict(tview="person", 
+                                                     action=action,
+                                                     form=PersonForm(self.database, person, _),
+                                                     logform=None))
+            else:
+                self.render("page_view.html",
+                            **self.get_template_dict(tview="person view",
+                                                     form=PageForm(self.database))
+                            )
         else:
             self.clear()
             self.set_status(404)
