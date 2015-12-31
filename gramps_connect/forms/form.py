@@ -9,6 +9,64 @@ class Form(object):
         self.schema = self._class.get_schema()
         self.instance = instance
         self._ = _
+        self.columns = []
+
+    def set_column_headings(self, *columns):
+        self.columns = columns
+
+    def get_field_name(self, field_post):
+        if ":" in field_post:
+            return field_post.split(":", 1)[0]
+        else:
+            return field_post
+
+    def get_post_process(self, field_post):
+        if ":" in field_post:
+            return field_post.split(":", 1)[1]
+        else:
+            return None
+
+    def select(self, fields, page_size=20, sort=False, filter=None):
+        # Fields are ordered:
+        self.fields = list(map(self.get_field_name, fields))
+        self.post_process = {k: v for k,v in zip(map(self.get_field_name, fields), 
+                                                 map(self.get_post_process, fields))}
+        self.page_size = page_size
+        self.sort = sort
+        self.filter = filter
+
+    def process(self, data, function):
+        if function == "gender":
+            return self._("Male")
+        elif function == "event_index":
+            ## FIXME: how to get this type of data in a SQL join?
+            return self._("Birth")
+        else:
+            raise Exception()
+
+    def get_page(self, start=0):
+        rows = self.database.select(self.table, self.fields, 
+                                    self.sort, start, 
+                                    limit=self.page_size,
+                                    filter=self.filter)
+        retval = []
+        for row in rows:
+            retval_row = []
+            for col in range(len(self.fields)):
+                field_name = self.fields[col]
+                data = row[col]
+                if self.post_process[field_name]:
+                    retval_row.append(self.process(data, self.post_process[field_name]))
+                else:
+                    retval_row.append(data)
+            retval.append(retval_row)
+        return retval
+
+    def get_columns(self):
+        headings = []
+        for field in self.columns:
+            headings.append(self._class.get_label(field, self._))
+        return headings
 
     def describe(self):
         raise Exception("not implemented")

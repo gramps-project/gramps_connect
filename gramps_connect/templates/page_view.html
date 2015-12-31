@@ -3,7 +3,31 @@
 
 {% block content %} 
 
-<table>
+{{ form.set_column_headings("gramps_id", 
+                            "primary_name.surname_list.surname",
+                            "primary_name.first_name",
+                "gramps_id",
+                "gender",
+                "birth_ref_index",
+                "death_ref_index",
+                           ) }}
+{{ form.select(["gramps_id", 
+                "primary_name.surname_list.0.surname",
+                "primary_name.first_name",
+                "gramps_id",
+                "gender:gender",
+                "birth_ref_index:event_index",
+                "death_ref_index:event_index",
+               ], sort=True) }}
+
+<table cellspacing="0" class="infolist surname" width="95%">
+<tr>
+{% for col in form.get_columns() %}
+  <th>
+    {{col}}
+  </th>
+{% end %}
+</tr>
 {% for row in form.get_page(start) %}
   <tr>
   {% for col in row %}

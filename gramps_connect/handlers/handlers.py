@@ -121,10 +121,9 @@ class PersonHandler(BaseHandler):
                 self.render("page_view.html",
                             **self.get_template_dict(tview="person view",
                                                      start=0,
-                                                     form=PageForm(self.database,
-                                                                   "Person",
-                                                                   ["gramps_id", "handle"], _))
-                            )
+                                                     form=PageForm(self.database, "Person", _),
+                                                 )
+                        )
         else:
             self.clear()
             self.set_status(404)
