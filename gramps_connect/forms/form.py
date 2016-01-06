@@ -1,4 +1,4 @@
-
+import logging
 
 class Form(object):
     """
@@ -10,6 +10,11 @@ class Form(object):
         self.instance = instance
         self._ = _
         self.columns = []
+        self.link = None
+        self.log = logging.getLogger(".Form")
+
+    def set_row_link(self, link):
+        self.link = link
 
     def set_column_headings(self, *columns):
         self.columns = columns
@@ -35,14 +40,19 @@ class Form(object):
         self.sort = sort
         self.filter = filter
 
-    def process(self, data, function):
+    def process(self, data, function, env):
+        retval = ""
         if function == "gender":
-            return self._("Male")
+            retval = self._("Male")
         elif function == "event_index":
             ## FIXME: how to get this type of data in a SQL join?
-            return self._("Birth")
+            retval = self._("Birth")
         else:
             raise Exception()
+        if self.link:
+            link = self.link % env
+            retval = """<a href="%s">%s</a>""" % (link, retval)
+        return retval
 
     def get_page(self, start=0):
         rows = self.database.select(self.table, self.fields, 
@@ -52,11 +62,10 @@ class Form(object):
         retval = []
         for row in rows:
             retval_row = []
-            for col in range(len(self.fields)):
-                field_name = self.fields[col]
-                data = row[col]
+            for field_name in self.fields:
+                data = row[field_name]
                 if self.post_process[field_name]:
-                    retval_row.append(self.process(data, self.post_process[field_name]))
+                    retval_row.append(self.process(data, self.post_process[field_name], row))
                 else:
                     retval_row.append(data)
             retval.append(retval_row)
@@ -124,3 +133,16 @@ class Form(object):
     def get(self, field):
         return self.instance.get_field(field)
 
+    def save(self, handler):
+        # go thorough fields and save values
+        for field in self.fields:
+            try:
+                value = handler.get_argument(field)
+            except:
+                self.log.warning("field '%s' not found in form" % field)
+                continue
+            self.instance.set_field(field, value)
+        transaction = self.database.get_transaction_class()
+        commit = self.database._tables[self._class.__name__]["commit_func"]
+        with transaction("Gramps Connect", self.database) as trans:
+            commit(self.instance, trans)

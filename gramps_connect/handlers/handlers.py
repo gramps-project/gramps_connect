@@ -128,3 +128,12 @@ class PersonHandler(BaseHandler):
             self.clear()
             self.set_status(404)
             self.finish("<html><body>No such person</body></html>")
+
+    @tornado.web.authenticated
+    def post(self, path):
+        if "/" in path:
+            handle, action = path.split("/")
+            person = self.database.get_person_from_handle(handle)
+            form = PersonForm(self.database, person, _)
+            form.save(handler=self)
+            self.redirect("/person/%(handle)s" % {"handle": handle})
