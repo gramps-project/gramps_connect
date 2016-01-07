@@ -1,6 +1,19 @@
 {% extends "gramps-base.html" %}
 
 {% block content %}
-<h2>Welcome, {{user}}</h2>
-<a href="/logout">logout</a>
+<h3>Logged in: {{user}}</h3>
+
+  <table>
+       <tr>
+	 <th>Item</th>
+	 <th>Count</th>
+       </tr>
+  {% for table in sorted(database._tables.keys()) %}
+       <tr>
+          <td><a href="/{{table.lower()}}">{{table}}</a></td>
+          <td><a href="/{{table.lower()}}">{{database._tables[table]["count_func"]()}}</a></td>
+       </tr>
+  {% end %}
+  </table>
+
 {% end %}

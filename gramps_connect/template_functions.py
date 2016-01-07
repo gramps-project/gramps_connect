@@ -45,6 +45,9 @@ def make_button(text, link, **kwargs):
         return """<a href="%(link)s">%(text)s</a>""" % {"link": link % kwargs, 
                                                        "text": text}
 
+def make_link(url, text, **kwargs):
+    return """<a href="%s"><b>%s</b></a>""" % ((url % kwargs), text)
+
 def nbsp(string):
     """
     """

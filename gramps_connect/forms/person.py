@@ -9,6 +9,8 @@ class PersonForm(Form):
     """
     """
     _class = Person
+    view = "person"
+    tview = "People"
 
     edit_fields = [
         "primary_name.type",

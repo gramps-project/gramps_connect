@@ -71,6 +71,7 @@ class GrampsConnect(Application):
         super().__init__([
             url(r"/", MainHandler,
                 {
+                    "database": self.database,
                     "sitename": self.sitename,
                 },
                 name="main"),
@@ -85,6 +86,12 @@ class GrampsConnect(Application):
                 },
                 name="logout"),
             url(r'/person/(.*)', PersonHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                },
+                name="person"),
+            url(r'/person', PersonHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,

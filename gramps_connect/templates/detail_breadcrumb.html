@@ -1,9 +1,10 @@
-  {# format "/browse|Browse" #}||
-  {# format "/%s/%s|%s" view args tviews #}
-  {% if 0 %} {# object.gramps_id #}
-  || {# format "/%s/%s|%s [%s]" view object.handle tview object.gramps_id #}
-  {% else %}
-    {# if object.name #}
-  || {# format "/%s/%s|%s [%s]" view object.handle tview object.name #}
-    {# end #}
+{% autoescape None %}
+
+  <p>
+  {{ make_link("/%(view)s", form.tview, view=form.view) }}
+  {% if form.instance.gramps_id %}
+    > {{ make_link("/%(view)s/%(handle)s", 
+                    ("%s [%s]" % (form.describe(), form.instance.gramps_id)), 
+                    view=form.view, handle=form.instance.handle)  }}
   {% end %}
+  </p>

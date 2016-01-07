@@ -356,9 +356,6 @@ function buttonOut(button) {
 	 {% else %}
          <li><a href="/logout">Logout</a></li>
 	 {% end %}         
-       {% if user %}
-         <li><a href="/admin">Admin</a></li>
-       {% end %}
     {% else %}
 	 {% if next %}
          <li><a href="/login/?next={# next #}">Login</a></li>

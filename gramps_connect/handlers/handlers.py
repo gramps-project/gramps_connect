@@ -30,6 +30,8 @@ exec("from gramps_connect.template_functions import *",
 
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
+        self.database = None
+        self.sitename = None
         for name in ["database", "sitename"]:
             if name in kwargs:
                 setattr(self, name, kwargs[name])
@@ -48,6 +50,7 @@ class BaseHandler(tornado.web.RequestHandler):
  
     def get_template_dict(self, **kwargs):
         dict = {
+            "database": self.database,
             "menu": [], 
             "action": "view", 
             "user": self.current_user, 
@@ -96,7 +99,7 @@ class LogoutHandler(BaseHandler):
 
 class PersonHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self, path):
+    def get(self, path=""):
         """
         HANDLE
         HANDLE/edit|view|delete|save|confirm
@@ -115,17 +118,18 @@ class PersonHandler(BaseHandler):
                                                      action=action,
                                                      form=PersonForm(self.database, _, instance=person),
                                                      logform=None))
+                return
             else:
-                self.render("page_view.html",
-                            **self.get_template_dict(tview="person view",
-                                                     start=0,
-                                                     form=PersonForm(self.database, _, table="Person"),
-                                                 )
-                        )
-        else:
-            self.clear()
-            self.set_status(404)
-            self.finish("<html><body>No such person</body></html>")
+                self.clear()
+                self.set_status(404)
+                self.finish("<html><body>No such person</body></html>")
+                return
+        self.render("page_view.html",
+                    **self.get_template_dict(tview="person view",
+                                             start=0,
+                                             form=PersonForm(self.database, _, table="Person"),
+                                         )
+                )
 
     @tornado.web.authenticated
     def post(self, path):
