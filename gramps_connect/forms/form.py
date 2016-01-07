@@ -50,7 +50,7 @@ class Form(object):
                     data = self.post_process_functions[field_name](data)
                 if self.link:
                     link = self.link % env
-                    data = """<a href="%s">%s</a>""" % (link, data)
+                    data = """<a href="%s" class="browsecell">%s</a>""" % (link, data)
                 retval_row.append(data)
             retval.append(retval_row)
         return retval

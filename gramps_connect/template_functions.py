@@ -34,15 +34,15 @@ def make_button(text, link, **kwargs):
             img_src = "/images/stock_index_24.png"
         else:
             raise Exception("invalid icon: %s" % kwargs["icon"])
-        return ("""<img height="22" width="22" alt="%(text)s" title="%(text)s" 
-     src="%(img_src)s" onmouseover="buttonOver(this)" onmouseout="buttonOut(this)" 
-        onclick="document.location.href='%(link)s'" 
+        return ("""<img height="22" width="22" alt="%(text)s" title="%(text)s"
+     src="%(img_src)s" onmouseover="buttonOver(this)" onmouseout="buttonOut(this)"
+        onclick="document.location.href='%(link)s'"
      style="background-color: lightgray; border: 1px solid lightgray; border-radius:5px; margin: 0px 1px; padding: 1px;" />
-""") % {"link": link % kwargs, 
+""") % {"link": link % kwargs,
         "img_src": img_src,
         "text": text}
     else:
-        return """<a href="%(link)s">%(text)s</a>""" % {"link": link % kwargs, 
+        return """<a href="%(link)s" class="browsecell">%(text)s</a>""" % {"link": link % kwargs,
                                                        "text": text}
 
 def make_link(url, text, **kwargs):
@@ -82,7 +82,7 @@ class Table(object):
         html = Html('div',
                     class_="content",
                     id=self.id,
-                    style=("overflow: auto; height:%spx; background-color: #f4f0ec;" % 
+                    style=("overflow: auto; height:%spx; background-color: #f4f0ec;" %
                            tab_height) if not style else style)
         table = Html("table", width="95%", cellspacing="0")
         rowhtml = Html("tr")
@@ -95,23 +95,23 @@ class Table(object):
             rowhtml = Html("tr")
             cell = Html("td", class_="TableDataCell", width=("%s%%" % self.columns[0][1]), colspan="1")
             div = Html("div", style="background-color: lightgray; padding: 2px 0px 0px 2px")
-            div += Html("img", height="22", width="22", 
-                        alt="Delete row", title="Delete row", 
-                        src="/images/gtk-remove.png", 
-                        onmouseover="buttonOver(this)", onmouseout="buttonOut(this)", 
-                        onclick="document.location.href='/person/b2cfa6ca1e174b1f63d/remove/eventref/1'", 
+            div += Html("img", height="22", width="22",
+                        alt="Delete row", title="Delete row",
+                        src="/images/gtk-remove.png",
+                        onmouseover="buttonOver(this)", onmouseout="buttonOut(this)",
+                        onclick="document.location.href='/person/b2cfa6ca1e174b1f63d/remove/eventref/1'",
                         style="background-color: lightgray; border: 1px solid lightgray; border-radius:5px; margin: 0px 1px; padding: 1px;")
-            div += Html("img", height="22", width="22", 
-                        alt="Move row up", title="Move row up", 
-                        src="/images/up.png", 
-                        onmouseover="buttonOver(this)", onmouseout="buttonOut(this)", 
-                        onclick="document.location.href='/person/b2cfa6ca1e174b1f63d/up/eventref/1'", 
+            div += Html("img", height="22", width="22",
+                        alt="Move row up", title="Move row up",
+                        src="/images/up.png",
+                        onmouseover="buttonOver(this)", onmouseout="buttonOut(this)",
+                        onclick="document.location.href='/person/b2cfa6ca1e174b1f63d/up/eventref/1'",
                         style="background-color: lightgray; border: 1px solid lightgray; border-radius:5px; margin: 0px 1px; padding: 1px;")
-            div += Html("img", height="22", width="22", 
-                        alt="Move row down", title="Move row down", 
-                        src="/images/down.png", 
-                        onmouseover="buttonOver(this)", onmouseout="buttonOut(this)", 
-                        onclick="document.location.href='/person/b2cfa6ca1e174b1f63d/down/eventref/1'", 
+            div += Html("img", height="22", width="22",
+                        alt="Move row down", title="Move row down",
+                        src="/images/down.png",
+                        onmouseover="buttonOver(this)", onmouseout="buttonOut(this)",
+                        onclick="document.location.href='/person/b2cfa6ca1e174b1f63d/down/eventref/1'",
                         style="background-color: lightgray; border: 1px solid lightgray; border-radius:5px; margin: 0px 1px; padding: 1px;")
             cell += div
             rowhtml += cell
@@ -142,11 +142,11 @@ def event_table(form, user, action, link=None, **kwargs):
     s = Struct.wrap(form.instance, form.database)
     count = 0
     for event_ref in s.event_ref_list: # eventrefs
-        table.append_row(event_ref.ref.description, 
-                         event_ref.ref.type.string, 
-                         event_ref.ref.gramps_id, 
-                         event_ref.ref.date.from_struct(), 
-                         event_ref.ref.place.name.value, 
+        table.append_row(event_ref.ref.description,
+                         event_ref.ref.type.string,
+                         event_ref.ref.gramps_id,
+                         event_ref.ref.date.from_struct(),
+                         event_ref.ref.place.name.value,
                          event_ref.role.string)
         has_data = True
         count += 1
@@ -173,7 +173,7 @@ def event_table(form, user, action, link=None, **kwargs):
 	margin-top: 0.00cm; margin-bottom: 0.00cm;
 	border-top:none; border-bottom:none;
 	border-left:none; border-right:none;
-	font-weight:bold; 
+	font-weight:bold;
 }
 #event_table .Header3 {
 	font-size: 10pt;
@@ -182,7 +182,7 @@ def event_table(form, user, action, link=None, **kwargs):
 	margin-top: 0.00cm; margin-bottom: 0.00cm;
 	border-top:none; border-bottom:none;
 	border-left:none; border-right:none;
-	font-style:italic; font-weight:bold; 
+	font-style:italic; font-weight:bold;
 }
 #event_table .Header1 {
 	font-size: 12pt;
@@ -191,7 +191,7 @@ def event_table(form, user, action, link=None, **kwargs):
 	margin-top: 0.00cm; margin-bottom: 0.00cm;
 	border-top:none; border-bottom:none;
 	border-left:none; border-right:none;
-	font-weight:bold; 
+	font-weight:bold;
 }
 #event_table .Title {
 	font-size: 14pt;
@@ -200,7 +200,7 @@ def event_table(form, user, action, link=None, **kwargs):
 	margin-top: 0.00cm; margin-bottom: 0.00cm;
 	border-top:none; border-bottom:none;
 	border-left:none; border-right:none;
-	font-weight:bold; 
+	font-weight:bold;
 }
 #event_table .Normal {
 	font-size: 12pt;
@@ -209,7 +209,7 @@ def event_table(form, user, action, link=None, **kwargs):
 	margin-top: 0.00cm; margin-bottom: 0.00cm;
 	border-top:none; border-bottom:none;
 	border-left:none; border-right:none;
-	
+
 }</style>"""
     if action == "view":
         retval += make_button(form._("Add New Event"), (link % kwargs), icon="+") # .replace("$act", "add"))
@@ -231,4 +231,3 @@ def event_table(form, user, action, link=None, **kwargs):
     if has_data:
         retval += """ <SCRIPT LANGUAGE="JavaScript">setHasData("%s", 1)</SCRIPT>\n""" % cssid
     return retval
-    

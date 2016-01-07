@@ -10,8 +10,8 @@
        </tr>
   {% for table in sorted(database._tables.keys()) %}
        <tr>
-          <td><a href="/{{table.lower()}}">{{table}}</a></td>
-          <td><a href="/{{table.lower()}}">{{database._tables[table]["count_func"]()}}</a></td>
+          <td><a href="/{{table.lower()}}" class="browsecell">{{table}}</a></td>
+          <td><a href="/{{table.lower()}}" class="browsecell">{{database._tables[table]["count_func"]()}}</a></td>
        </tr>
   {% end %}
   </table>
