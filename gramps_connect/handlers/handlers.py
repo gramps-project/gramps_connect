@@ -23,8 +23,6 @@ import tornado.web
 from gramps.gen.utils.grampslocale import GrampsLocale, _
 
 from ..forms.person import PersonForm
-from ..forms.page import PageForm
-
 
 template_functions = {}
 exec("from gramps_connect.template_functions import *", 
@@ -115,13 +113,13 @@ class PersonHandler(BaseHandler):
                 self.render("person.html", 
                             **self.get_template_dict(tview="person", 
                                                      action=action,
-                                                     form=PersonForm(self.database, person, _),
+                                                     form=PersonForm(self.database, _, instance=person),
                                                      logform=None))
             else:
                 self.render("page_view.html",
                             **self.get_template_dict(tview="person view",
                                                      start=0,
-                                                     form=PageForm(self.database, "Person", _),
+                                                     form=PersonForm(self.database, _, table="Person"),
                                                  )
                         )
         else:
@@ -134,6 +132,6 @@ class PersonHandler(BaseHandler):
         if "/" in path:
             handle, action = path.split("/")
             person = self.database.get_person_from_handle(handle)
-            form = PersonForm(self.database, person, _)
+            form = PersonForm(self.database, _, instance=person)
             form.save(handler=self)
             self.redirect("/person/%(handle)s" % {"handle": handle})

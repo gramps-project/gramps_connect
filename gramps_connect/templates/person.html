@@ -71,7 +71,7 @@
  <td class="ColumnAttribute">{{ form.get_label("gramps_id") }}:</td>
  <td class="ColumnValue" id="data">{{ form.render("gramps_id", user, action) }}</td>
  <td class="ColumnAttribute">{{ form.get_label("tag_list") }}:</td>
- <td class="ColumnValue" id="data" rowspan="3">{{ form.render("tag_list:get_tag_from_handle:name", user, action) }}</td>
+ <td class="ColumnValue" id="data" rowspan="3">{{ form.render("tag_list", user, action) }}</td>
 </tr>
 <tr><td id="rowspace"></td></tr>
 <tr>
