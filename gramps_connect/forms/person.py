@@ -61,7 +61,7 @@ class PersonForm(Form):
                 event = self.database.get_event_from_handle(event_ref.ref)
                 if event:
                     return event.date
-        return ""
+        return "&nbsp;"
 
     def render_gender(self, gender_code, env):
         return ["Female", "Male", "Unknown"][gender_code]

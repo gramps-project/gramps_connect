@@ -19,3 +19,4 @@
 #
 
 from .person import PersonForm
+from .family import FamilyForm

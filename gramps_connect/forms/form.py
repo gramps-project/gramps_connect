@@ -72,7 +72,7 @@ class Form(object):
         ## FIXME: parse search to filter:
         ## search: "value" OR "field=value, field=value, ..."
         if search:
-            self.filter = {"primary_name.surname_list.0.surname": ("LIKE", search)}
+            self.filter = {"primary_name.surname_list.0.surname": ("LIKE", "%%%s%%" % search)}
         else:
             self.filter = None
         self.rows = self.database.select(self.table,

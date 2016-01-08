@@ -36,6 +36,7 @@ from gramps.gen.utils.file import media_path_full
 
 ## Gramps Connect imports
 from gramps_connect.handlers import *
+from gramps_connect.forms import *
 
 ## Command-line configuration options:
 define("hostname", default="localhost",
@@ -98,6 +99,18 @@ class GrampsConnect(Application):
                 },
                 name="person"),
             url(r'/person', PersonHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                },
+            ),
+            url(r'/family/(.*)', FamilyHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                },
+                name="family"),
+            url(r'/family', FamilyHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
