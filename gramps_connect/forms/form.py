@@ -52,8 +52,7 @@ class Form(object):
         return query
 
     def get_page_controls(self, page):
-        ## FIXME: records should be number total of matching
-        records = self.database._tables[self.table]["count_func"]()
+        records = self.rows.total
         matching = len(self.rows)
         total_pages = math.ceil(records / self.page_size)
         return ("""<div align="center" style="background-color: lightgray; border: 1px solid black; border-radius:5px; margin: 0px 1px; padding: 1px;">""" +
@@ -68,16 +67,19 @@ class Form(object):
                 "</div>")
 
     def select(self, page=1, search=None):
-        ## FIXME: select should check all, and then show subportion
         self.page = page - 1
         self.search = search
         ## FIXME: parse search to filter:
-        ## self.filter = {"primary_name.surname_list.0.surname": ("LIKE", "Blank")}
-        self.rows = list(self.database.select(self.table,
+        ## search: "value" OR "field=value, field=value, ..."
+        if search:
+            self.filter = {"primary_name.surname_list.0.surname": ("LIKE", search)}
+        else:
+            self.filter = None
+        self.rows = self.database.select(self.table,
                                          self.select_fields + self.env_fields,
                                          self.sort, self.page * self.page_size,
                                          limit=self.page_size,
-                                         filter=self.filter))
+                                         filter=self.filter)
         return ""
 
     def get_rows(self):
