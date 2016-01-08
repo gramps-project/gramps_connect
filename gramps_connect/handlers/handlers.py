@@ -119,7 +119,8 @@ class PersonHandler(BaseHandler):
         /add
         b2cfa6ca1e174b1f63d/remove/eventref/1
         """
-        page = int(self.get_argument("page", 0))
+        page = int(self.get_argument("page", 1))
+        search = self.get_argument("search", "")
         if "/" in path:
             handle, action= path.split("/", 1)
         else:
@@ -147,6 +148,7 @@ class PersonHandler(BaseHandler):
         self.render("page_view.html",
                     **self.get_template_dict(tview=_("person view"),
                                              page=page,
+                                             search=search,
                                              form=PersonForm(self.database, _, table="Person"),
                                          )
                 )

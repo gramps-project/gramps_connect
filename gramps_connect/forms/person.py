@@ -31,7 +31,6 @@ class PersonForm(Form):
     link = "/person/%(handle)s"
 
     select_fields = [
-        "gramps_id",
         "primary_name.surname_list.0.surname",
         "primary_name.first_name",
         "gramps_id",
@@ -65,3 +64,6 @@ class PersonForm(Form):
 
     def probably_alive(self):
         return True
+
+    def get_search_terms(self):
+        return "surname, given, id, tag, public, private"
