@@ -102,7 +102,7 @@ class GrampsConnect(Application):
                     "database": self.database,
                     "sitename": self.sitename,
                 },
-                name="person"),
+            ),
             url(r'/imageserver/(.*)', ImageHandler,
                 {
                     "HOMEDIR": self.options.home_dir,

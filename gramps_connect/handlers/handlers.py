@@ -21,6 +21,8 @@
 import tornado.web
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
+from gramps.gen.utils.id import create_id
+from gramps.gen.lib import Person, Surname
 
 from ..forms.person import PersonForm
 
@@ -80,7 +82,6 @@ class BaseHandler(tornado.web.RequestHandler):
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        #self.write(self._("Person"))
         self.render('index.html', **self.get_template_dict())
 
 class LoginHandler(BaseHandler):
@@ -114,15 +115,21 @@ class PersonHandler(BaseHandler):
     def get(self, path=""):
         """
         HANDLE
-        HANDLE/edit|view|delete|save|confirm
+        HANDLE/edit|delete
+        /add
         b2cfa6ca1e174b1f63d/remove/eventref/1
         """
         if "/" in path:
             handle, action= path.split("/", 1)
         else:
             handle, action = path, "view"
-        if handle:
-            person = self.database.get_person_from_handle(handle)
+        if handle and handle != "None": # None when canceling an add
+            if handle == "add":
+                person = Person()
+                person.primary_name.surname_list.append(Surname())
+                action = "edit"
+            else:
+                person = self.database.get_person_from_handle(handle)
             if person:
                 person.probably_alive = True
                 self.render("person.html", 
@@ -147,7 +154,14 @@ class PersonHandler(BaseHandler):
     def post(self, path):
         if "/" in path:
             handle, action = path.split("/")
+        else:
+            handle, action = path, "view"
+        if handle == "add":
+            person = Person()
+            person.primary_name.surname_list.append(Surname())
+            person.handle = handle = create_id()
+        else:
             person = self.database.get_person_from_handle(handle)
-            form = PersonForm(self.database, _, instance=person)
-            form.save(handler=self)
-            self.redirect("/person/%(handle)s" % {"handle": handle})
+        form = PersonForm(self.database, _, instance=person)
+        form.save(handler=self)
+        self.redirect("/person/%(handle)s" % {"handle": handle})
