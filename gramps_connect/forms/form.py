@@ -32,9 +32,9 @@ class Form(object):
 
     def select(self, start=0):
         # Fields are ordered:
-        rows = self.database.select(self.table, 
-                                    self.select_fields + self.env_fields, 
-                                    self.sort, start, 
+        rows = self.database.select(self.table,
+                                    self.select_fields + self.env_fields,
+                                    self.sort, start,
                                     limit=self.page_size,
                                     filter=self.filter)
         retval = []

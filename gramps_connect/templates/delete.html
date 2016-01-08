@@ -1,0 +1,13 @@
+{% extends "gramps-base.html" %}
+
+{% block content %}
+
+<p>Delete {{form.describe()}}?</p>
+
+  <form method="post">
+    {% module xsrf_form_html() %}
+    <input type="button" value="Cancel" onclick="location.href='/{{table}}/{{handle}}';" />
+    <input type="submit" value="Delete" />
+  </form>
+
+{% end %}

@@ -18,6 +18,4 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from .handlers import *
-from .imagehandler import ImageHandler
-from .deletehandler import DeleteHandler
+from .person import PersonForm

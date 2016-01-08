@@ -85,6 +85,12 @@ class GrampsConnect(Application):
                     "sitename": self.sitename,
                 },
                 name="logout"),
+            url(r'/(.*)/(.*)/delete', DeleteHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                },
+            ),
             url(r'/person/(.*)', PersonHandler,
                 {
                     "database": self.database,

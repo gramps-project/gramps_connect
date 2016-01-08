@@ -61,9 +61,21 @@ class BaseHandler(tornado.web.RequestHandler):
             "_": self._,
             "next": self.get_argument("next", None),
         }
-        dict.update(kwargs)
         dict.update(template_functions)
+        dict.update(kwargs)
         return dict
+
+    def get_form(self, table):
+        """
+        Return the proper form, give a table name.
+        """
+        if table == "person":
+            form = PersonForm
+        elif table == "family":
+            form = FamilyForm
+        else:
+            raise Exception("invalid form")
+        return form
 
 class MainHandler(BaseHandler):
     @tornado.web.authenticated

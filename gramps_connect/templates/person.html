@@ -94,7 +94,7 @@
 
 {% if user %}
   {% if action == "edit" %}
-    {{ make_button("Cancel", "/person/%(handle)s", handle=form.get("handle")) }}
+    <input type="button" value="Cancel" onclick="location.href='/person/{{form.instance.handle}}';" />
     <input type="hidden" name="action" value="save"/>
     <input type="hidden" name="search" value="{# search #}"/>
     <input type="hidden" name="page" value="{# page #}"/>
