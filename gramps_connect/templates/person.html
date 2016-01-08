@@ -1,5 +1,8 @@
 {% autoescape None %}
-{% extends "view_page_detail.html" %}
+{% extends "gramps-base.html" %}
+
+{% block title %}{{sitename}}: {{tview}} {% end %}
+{% block heading %}{{sitename}}: {{tview}} {% end %}
 
 {% block content %} 
    <script type="text/javascript">
@@ -94,7 +97,11 @@
 
 {% if user %}
   {% if action == "edit" %}
-    <input type="button" value="Cancel" onclick="location.href='/person/{{form.instance.handle}}';" />
+    {% if form.instance.handle %}
+       {{make_button(_("Cancel"), "/person/" + form.instance.handle)}}
+    {% else %}
+       {{make_button(_("Cancel"), "/person")}}
+    {% end %}
     <input type="hidden" name="action" value="save"/>
     <input type="hidden" name="search" value="{# search #}"/>
     <input type="hidden" name="page" value="{# page #}"/>
@@ -108,9 +115,9 @@
       <input type="submit" value="Create"/>
     {% else %}
       <div style="background-color: lightgray; padding: 2px 0px 0px 2px; clear: both;">
-      {{ make_button(_("Add Person"), "/person/add", icon="+") }}
-      {{ make_button(_("Edit Person"), "/person/%(handle)s/edit", icon="?", handle=form.get("handle")) }}
-      {{ make_button(_("Delete Person"), "/person/%(handle)s/delete", icon="-", handle=form.get("handle")) }}
+      {{ make_icon_button(_("Add Person"), "/person/add", icon="+") }}
+      {{ make_icon_button(_("Edit Person"), "/person/%(handle)s/edit", icon="?", handle=form.get("handle")) }}
+      {{ make_icon_button(_("Delete Person"), "/person/%(handle)s/delete", icon="-", handle=form.get("handle")) }}
       </div>
     {% end %}
   {% end %}

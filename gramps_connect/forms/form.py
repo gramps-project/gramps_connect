@@ -1,5 +1,7 @@
 import logging
 
+from ..template_functions import make_button
+
 class Form(object):
     """
     """
@@ -30,11 +32,28 @@ class Form(object):
     def set_post_process_functions(self):
         pass
 
-    def select(self, start=0):
+    def get_column_count(self):
+        return len(self.select_fields)
+
+    def get_page_controls(self, page):
+        records = self.database._tables[self.table]["count_func"]()
+        total_pages = int(records / self.page_size)
+        return ("<p>" +
+                make_button("<<", "?page=0") +
+                " | " +
+                make_button("<", "?page=%s" % max(page - 1, 0)) +
+                (" | <b>Page</b> %s of %s | " % (page + 1, total_pages + 1)) +
+                make_button(">", "?page=%s" % min(page + 1, total_pages)) +
+                " | " +
+                make_button(">>", "?page=%s" % total_pages) +
+                (" | <b>Showing</b>: %s/%s " % (records, records)) +
+                "</p>")
+
+    def select(self, page=0):
         # Fields are ordered:
         rows = self.database.select(self.table,
                                     self.select_fields + self.env_fields,
-                                    self.sort, start,
+                                    self.sort, page * self.page_size,
                                     limit=self.page_size,
                                     filter=self.filter)
         retval = []

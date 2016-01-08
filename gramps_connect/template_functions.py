@@ -22,7 +22,10 @@ from gramps.plugins.lib.libhtml import Html
 from gramps.gen.lib import *
 from gramps.gen.lib.struct import Struct
 
-def make_button(text, link, **kwargs):
+def make_button(text, link):
+    return """<input type="button" value="%s" onclick="location.href='%s';" />""" % (text, link)
+
+def make_icon_button(text, link, **kwargs):
     if "icon" in kwargs:
         if kwargs["icon"] == "+":
             img_src = "/images/add.png"
@@ -212,8 +215,8 @@ def event_table(form, user, action, link=None, **kwargs):
 
 }</style>"""
     if action == "view":
-        retval += make_button(form._("Add New Event"), (link % kwargs), icon="+") # .replace("$act", "add"))
-        retval += make_button(form._("Add Existing Event"), (link % kwargs), icon="$") # .replace("$act", "share"))
+        retval += make_icon_button(form._("Add New Event"), (link % kwargs), icon="+") # .replace("$act", "add"))
+        retval += make_icon_button(form._("Add Existing Event"), (link % kwargs), icon="$") # .replace("$act", "share"))
     else:
         retval += """<div style="height: 26px;"></div>""" # to keep tabs same height
     retval += """</div>"""
@@ -224,9 +227,9 @@ def event_table(form, user, action, link=None, **kwargs):
         #retval = retval.replace("}}", """</div>""")
         #for (djevent, event_ref) in event_list:
         #    item = form.instance.__class__.__name__.lower()
-        #    retval = retval.replace("[[x%d]]" % count, make_button("x", "/%s/%s/remove/eventref/%d" % (item, form.instance.handle, count)))
-        #    retval = retval.replace("[[^%d]]" % count, make_button("^", "/%s/%s/up/eventref/%d" % (item, form.instance.handle, count)))
-        #    retval = retval.replace("[[v%d]]" % count, make_button("v", "/%s/%s/down/eventref/%d" % (item, form.instance.handle, count)))
+        #    retval = retval.replace("[[x%d]]" % count, make_icon_button("x", "/%s/%s/remove/eventref/%d" % (item, form.instance.handle, count)))
+        #    retval = retval.replace("[[^%d]]" % count, make_icon_button("^", "/%s/%s/up/eventref/%d" % (item, form.instance.handle, count)))
+        #    retval = retval.replace("[[v%d]]" % count, make_icon_button("v", "/%s/%s/down/eventref/%d" % (item, form.instance.handle, count)))
         #    count += 1
     if has_data:
         retval += """ <SCRIPT LANGUAGE="JavaScript">setHasData("%s", 1)</SCRIPT>\n""" % cssid

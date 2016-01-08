@@ -1,9 +1,17 @@
 {% autoescape None %}
-{% extends "view_page_detail.html" %}
+{% extends "gramps-base.html" %}
+
+{% block title %}{{sitename}}: {{tview}} {% end %}
+{% block heading %}{{sitename}}: {{tview}} {% end %}
 
 {% block content %} 
 
 <table cellspacing="0" class="infolist surname" width="95%">
+<tr>
+  <td colspan="{{form.get_column_count()}}">
+    {{ form.get_page_controls(page) }}
+  </td>
+</tr>
 <tr>
 {% for col in form.get_column_labels() %}
   <th>
@@ -11,7 +19,7 @@
   </th>
 {% end %}
 </tr>
-{% for row in form.select(start) %}
+{% for row in form.select(page) %}
   <tr>
   {% for col in row %}
       <td>
@@ -20,6 +28,15 @@
   {% end %}
   </tr>
 {% end %}
+<tr>
+  <td colspan="{{form.get_column_count()}}">
+    {{ form.get_page_controls(page) }}
+  </td>
+</tr>
 </table>
+
+<div style="background-color: lightgray; padding: 2px 0px 0px 2px">
+{{ make_icon_button(_("Add " + form._class.__name__), "/" + form.table.lower() +"/add", icon="+") }}
+</div>
 
 {% end %}
