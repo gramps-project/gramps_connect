@@ -56,7 +56,7 @@ class Form(object):
         records = self.database._tables[self.table]["count_func"]()
         matching = len(self.rows)
         total_pages = math.ceil(records / self.page_size)
-        return ("<p>" +
+        return ("""<div align="center" style="background-color: lightgray; border: 1px solid black; border-radius:5px; margin: 0px 1px; padding: 1px;">""" +
                 make_button("<<", self.make_query(page=1)) +
                 " | " +
                 make_button("<", self.make_query(page=max(page - 1, 1))) +
@@ -65,7 +65,7 @@ class Form(object):
                 " | " +
                 make_button(">>", self.make_query(page=total_pages)) +
                 (" | <b>Showing</b>: %s/%s " % (matching, records)) +
-                "</p>")
+                "</div>")
 
     def select(self, page=1, search=None):
         ## FIXME: select should check all, and then show subportion
@@ -92,7 +92,7 @@ class Form(object):
             for field_name in self.select_fields:
                 data = row[field_name]
                 if field_name in self.post_process_functions:
-                    data = self.post_process_functions[field_name](data)
+                    data = self.post_process_functions[field_name](data, env)
                 if self.link:
                     link = self.link % env
                     data = """<a href="%s" class="browsecell">%s</a>""" % (link, data)

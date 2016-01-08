@@ -41,6 +41,7 @@ class PersonForm(Form):
 
     env_fields = [
         "handle",
+        "event_ref_list",
     ]
 
     sort = True
@@ -53,11 +54,17 @@ class PersonForm(Form):
             #"tag_list": self.get_tag_from_handle:name
         }
 
-    def event_index(self, index):
-        return self._("Birth")
+    def event_index(self, index, env):
+        if 0 <= index < len(env["event_ref_list"]):
+            event_ref = env["event_ref_list"][index]
+            if event_ref.ref:
+                event = self.database.get_event_from_handle(event_ref.ref)
+                if event:
+                    return event.date
+        return ""
 
-    def render_gender(self, gender_code):
-        return self._("Male")
+    def render_gender(self, gender_code, env):
+        return ["Female", "Male", "Unknown"][gender_code]
 
     def describe(self):
         return nd(self.instance)
