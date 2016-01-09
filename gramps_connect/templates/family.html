@@ -47,10 +47,11 @@
 	        watermark: 'Father',
 	        width: 300,
 	        paging: {  
-                  pageSize: 10  
+                  pageSize: 10,
+	          showSummary: true,
 	        },
-  	        initialValue: '{{form.render("father_handle", user, "view") }}',
-  	        initialId: '{{form.get("father_handle") }}'
+  	        initialValue: '{{ form.render("father_handle", user, "view") }}',
+  	        initialId: '{{ form.get("father_handle") }}'
 	        });
         });  
     // </script>
@@ -60,7 +61,7 @@
 {% end %}
 </td>
 {% else %}
- {# family.father|render_name:user #}
+ {{ form.render("father_handle", user, action) }}
 {% end %}
  </td>
  <td class="ColumnAttribute">Name:</td>
@@ -73,20 +74,20 @@
 	        watermark: 'Mother',
 	        width: 300,
 	        paging: {  
-                  pageSize: 10  
+                  pageSize: 10,
 	          showSummary: true,
 	        },
-	        initialValue: '{{form.render("mother_handle", user, "view")  }}',
+	        initialValue: '{{ form.render("mother_handle", user, "view")  }}',
   	        initialId: '{{ form.get("mother_handle") }}'
 	        });
         });  
     // </script>
     <div id="mother"></div>  
 {% else %}
- {# family.mother|render_name:user #}
+ {{ form.render("mother_handle", user, action) }}
 {% end %}
 {% else %}
- {# family.mother|render_name:user #}
+ {{ form.render("mother_handle", user, action) }}
 {% end %}
 </td>
 </tr>

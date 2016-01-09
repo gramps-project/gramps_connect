@@ -131,6 +131,10 @@ class GrampsConnect(Application):
                     "database": self.database,
                 }
             ),
+            url(r"/styles/img/(.*)", StaticFileHandler,
+                {
+                    'path': os.path.join(gramps.gen.const.PLUGINS_DIR, "webstuff", "img"),
+                }),
             url(r"/styles/(.*)", StaticFileHandler,
                 {
                     'path': gramps.gen.const.DATA_DIR,

@@ -54,7 +54,7 @@ class JsonHandler(BaseHandler):
         else:
             raise Exception("""Invalid field: '%s'; Example: /json/?field=mother&q=Smith&p=1&size=10""" % field)
         ## ------------
-        rows = self.database.select(table, fields, sort, (page - 1) * 10, 
+        rows = self.database.select(table, fields, sort, (page - 1) * size, 
                                     size, filter)
         response_data = {"results": [], "total": rows.total}
         for row in rows:
