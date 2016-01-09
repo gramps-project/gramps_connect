@@ -138,6 +138,8 @@ class Form(object):
                 id = js if js else "id_" + field
                 dict = {"id": id, "name": field, "value": retval}
                 retval = """<input id="%(id)s" type="text" name="%(name)s" value="%(value)s" style="display:table-cell; width:100%%">""" % dict
+        if field in self.post_process_functions:
+            retval = self.post_process_functions[field](data, {})
         return str(retval)
 
     def get(self, field):

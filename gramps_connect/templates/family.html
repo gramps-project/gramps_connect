@@ -56,7 +56,7 @@
     // </script>
     <div id="father"></div>  
 {% else %}
- {# family.father|render_name:user #}
+ {{ form.render("father_handle", user, action) }}
 {% end %}
 </td>
 {% else %}
