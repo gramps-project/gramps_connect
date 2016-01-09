@@ -126,6 +126,11 @@ class GrampsConnect(Application):
                 },
                 name="imageserver",
             ),
+            url(r"/json/", JsonHandler,
+                {
+                    "database": self.database,
+                }
+            ),
             url(r"/styles/(.*)", StaticFileHandler,
                 {
                     'path': gramps.gen.const.DATA_DIR,

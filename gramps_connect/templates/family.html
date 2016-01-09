@@ -49,8 +49,8 @@
 	        paging: {  
                   pageSize: 10  
 	        },
-  	        initialValue: '{#family.father.get_selection_string#}',
-  	        initialId: '{#family.father.handle#}'
+  	        initialValue: '{{form.render("father_handle", user, "view") }}',
+  	        initialId: '{{form.get("father_handle") }}'
 	        });
         });  
     // </script>
@@ -74,9 +74,10 @@
 	        width: 300,
 	        paging: {  
                   pageSize: 10  
+	          showSummary: true,
 	        },
-	        initialValue: '{# family.mother.get_selection_string #}',
-  	        initialId: '{# family.mother.handle #}'
+	        initialValue: '{{form.render("mother_handle", user, "view")  }}',
+  	        initialId: '{{ form.get("mother_handle") }}'
 	        });
         });  
     // </script>
@@ -154,9 +155,9 @@
       <input type="submit" value="Create"/>
     {% else %}
       <div style="background-color: lightgray; padding: 2px 0px 0px 2px; clear: both;">
-      {# make_button "+Add Family" "/family/add" args #}
-      {# make_button "?Edit Family" "/family/%s/edit" family.handle args #}
-      {# make_button "-Delete Family" "/family/%s/delete" family.handle args #}
+      {{ make_icon_button(_("Add Family"), "/family/add", icon="+") }}
+      {{ make_icon_button(_("Edit Family"), "/family/%(handle)s/edit", icon="?", handle=form.get("handle")) }}
+      {{ make_icon_button(_("Delete Family"), "/family/%(handle)s/delete", icon="-", handle=form.get("handle")) }}
       </div>
     {% end %}
   {% end %}
@@ -174,7 +175,6 @@
     <li class="ui-corner-top ui-state-default"><a class="tab-notes" href="#tab-notes">Note</a></li>
     <li class="ui-corner-top ui-state-default"><a class="tab-media" href="#tab-media">Media</a></li>
     <li class="ui-corner-top ui-state-default"><a class="tab-lds" href="#tab-lds">LDS</a></li>
-    <li class="ui-corner-top ui-state-default"><a class="tab-history" href="#tab-history">History</a></li>
   </ul>
   <div class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="tab-children" style="background-color: #f4f0ec;"> 
     <!-- Events -->
@@ -197,9 +197,6 @@
   </div>
   <div class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide" id="tab-lds" style="background-color: #f4f0ec;"> 
     {# lds_table family user action "/lds/add/family/%s" family.handle #}
-  </div>
-  <div class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide" id="tab-history" style="background-color: #f4f0ec;"> 
-    {# history_table family user action #}
   </div>
 </div>
 

@@ -21,3 +21,4 @@
 from .handlers import *
 from .imagehandler import ImageHandler
 from .deletehandler import DeleteHandler
+from .jsonhandler import JsonHandler
