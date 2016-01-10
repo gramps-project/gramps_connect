@@ -1,7 +1,4 @@
 from gramps.gen.lib.family import Family
-from gramps.gen.display.name import NameDisplay
-
-nd = NameDisplay().display
 
 from .form import Form
 
@@ -24,6 +21,17 @@ class FamilyForm(Form):
         "type.string",
     ]
 
+    search_terms = [
+        "father", "mother", "id",
+    ]
+
+    search_ops = {
+        "father_handle.primary_name.surname_list.surname": "NI",
+        "father_handle.primary_name.surname_list.surname": "NI",
+        }
+
+    default_search_fields = ["father_handle.primary_name.surname_list.0.surname"]
+
     env_fields = [
         "handle",
     ]
@@ -37,15 +45,6 @@ class FamilyForm(Form):
             #"tag_list": self.get_tag_from_handle:name
         }
 
-    def get_person_from_handle(self, handle, env):
-        person = self.database.get_person_from_handle(handle)
-        if person:
-            return nd(person)
-        else:
-            return "&nbsp;"
-
     def describe(self):
         return str(self.instance)
 
-    def get_search_terms(self):
-        return "father, mother, id, type, surnames, father.name.first_name, mother.name.first_name, tag, public, private"

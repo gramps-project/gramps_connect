@@ -3,6 +3,10 @@ import math
 
 from ..template_functions import make_button
 
+from gramps.gen.display.name import NameDisplay
+
+nd = NameDisplay().display
+
 class Form(object):
     """
     """
@@ -12,6 +16,7 @@ class Form(object):
     select_fields = []
     env_fields = []
     post_process_functions = {}
+    search_terms = []
     link = None
     filter = None
     page_size = 25
@@ -32,9 +37,6 @@ class Form(object):
 
     def set_post_process_functions(self):
         pass
-
-    def get_search_terms(self):
-        return ""
 
     def get_column_count(self):
         return len(self.select_fields) + 1
@@ -63,18 +65,40 @@ class Form(object):
                 make_button(">", self.make_query(page=min(page + 1, total_pages))) +
                 " | " +
                 make_button(">>", self.make_query(page=total_pages)) +
-                (" | <b>Showing</b>: %s/%s " % (matching, records)) +
+                (" | <b>Showing</b>: %s/%s in %f seconds" % (matching, records, self.rows.time)) +
                 "</div>")
 
     def select(self, page=1, search=None):
         self.page = page - 1
         self.search = search
-        ## FIXME: parse search to filter:
-        ## search: "value" OR "field=value, field=value, ..."
         if search:
-            self.filter = {"primary_name.surname_list.0.surname": ("LIKE", "%%%s%%" % search)}
+            ## FIXME: currently there is only OR in the parser; need to add AND
+            searches = search.split(",")
+            filt_list = []
+            # get all filter terms:
+            for search_pair in searches:
+                if "=" in search_pair:
+                    field, term = [s.strip() for s in search_pair.split("=", 1)]
+                    op = "LIKE"
+                    filt_list.append((field, op, term))
+                else: # search all defaults
+                    for field in self.default_search_fields:
+                        op = "LIKE"
+                        term = search_pair.strip()
+                        filt_list.append((field, op, term))
+            # check filter terms for alias, special ops:
+            filter = []
+            for (field, op, term) in filt_list:
+                # check for named aliases:
+                field = self.database._tables[self.table]["class_func"].get_field_alias(field)
+                # check for special op:
+                if field in self.search_ops:
+                    op = self.search_ops[field]
+                filter.append((field, op, term))
+            self.filter = [["OR", filter]]
         else:
             self.filter = None
+        self.log.info("filter: " + str(self.filter))
         self.rows = self.database.select(self.table,
                                          self.select_fields + self.env_fields,
                                          self.sort, self.page * self.page_size,
@@ -97,6 +121,7 @@ class Form(object):
                     data = self.post_process_functions[field_name](data, env)
                 if self.link:
                     link = self.link % env
+                    data = data if data else "&nbsp;"
                     data = """<a href="%s" class="browsecell">%s</a>""" % (link, data)
                 retval_row.append(data)
             retval.append(retval_row)
@@ -116,7 +141,7 @@ class Form(object):
         return self.instance.get_label(field, self._)
 
     def render(self, field, user, action, js=None, link=None, **kwargs):
-        data = self.instance.get_field(field)
+        data = self.instance.get_field(field, self.database)
         if isinstance(data, (list, tuple)):
             if action == "view":
                 retval = ""
@@ -140,10 +165,12 @@ class Form(object):
                 retval = """<input id="%(id)s" type="text" name="%(name)s" value="%(value)s" style="display:table-cell; width:100%%">""" % dict
         if field in self.post_process_functions:
             retval = self.post_process_functions[field](data, {})
+        if link:
+            retval = '''<a href="''' +  (link % kwargs) + '''">''' + retval + """</a>"""
         return str(retval)
 
     def get(self, field):
-        return self.instance.get_field(field)
+        return self.instance.get_field(field, self.database)
 
     def save(self, handler):
         # go thorough fields and save values
@@ -158,3 +185,11 @@ class Form(object):
         commit = self.database._tables[self._class.__name__]["commit_func"]
         with transaction("Gramps Connect", self.database) as trans:
             commit(self.instance, trans)
+
+    def get_person_from_handle(self, handle, env):
+        person = self.database.get_person_from_handle(handle)
+        if person:
+            return nd(person)
+        else:
+            return ""
+

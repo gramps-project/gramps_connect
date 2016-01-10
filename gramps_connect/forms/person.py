@@ -30,6 +30,20 @@ class PersonForm(Form):
 
     link = "/person/%(handle)s"
 
+    search_ops = {
+        "primary_name.surname_list.surname": "NI",
+        "tag_list": "NI",
+    }
+
+    default_search_fields = [
+        "primary_name.surname_list.0.surname",
+        "primary_name.first_name",
+    ]
+
+    search_terms = [
+        "surname", "given", "id", "gender", "birth", "death",
+    ]
+
     select_fields = [
         "primary_name.surname_list.0.surname",
         "primary_name.first_name",
@@ -61,7 +75,7 @@ class PersonForm(Form):
                 event = self.database.get_event_from_handle(event_ref.ref)
                 if event:
                     return event.date
-        return "&nbsp;"
+        return ""
 
     def render_gender(self, gender_code, env):
         return ["Female", "Male", "Unknown"][gender_code]
@@ -71,6 +85,3 @@ class PersonForm(Form):
 
     def probably_alive(self):
         return True
-
-    def get_search_terms(self):
-        return "surname, given, id, tag, public, private"
