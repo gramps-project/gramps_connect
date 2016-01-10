@@ -74,50 +74,59 @@ class GrampsConnect(Application):
                 {
                     "database": self.database,
                     "sitename": self.sitename,
+                    "opts" : self.options,
                 },
                 name="main"),
             url(r'/login', LoginHandler,
                 {
                     "sitename": self.sitename,
+                    "opts" : self.options,
                 },
                 name="login"),
             url(r'/logout', LogoutHandler,
                 {
                     "sitename": self.sitename,
+                    "opts" : self.options,
                 },
                 name="logout"),
             url(r'/(.*)/(.*)/delete', DeleteHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
+                    "opts" : self.options,
                 },
             ),
             url(r'/person/(.*)', PersonHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
+                    "opts" : self.options,
                 },
                 name="person"),
             url(r'/person', PersonHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
+                    "opts" : self.options,
                 },
             ),
             url(r'/family/(.*)', FamilyHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
+                    "opts" : self.options,
                 },
                 name="family"),
             url(r'/family', FamilyHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
+                    "opts" : self.options,
                 },
             ),
             url(r'/imageserver/(.*)', ImageHandler,
                 {
+                    "opts" : self.options,
                     "HOMEDIR": self.options.home_dir,
                     "PORT": self.options.port,
                     "HOSTNAME": self.options.hostname,
@@ -183,8 +192,11 @@ if __name__ == "__main__":
                 template_filename = os.path.join(dirpath, filename)
                 tornado.log.logging.info("   watching: " + os.path.relpath(template_filename))
                 tornado.autoreload.watch(template_filename)
-    GrampsConnect(options).listen(options.port)
+    app = GrampsConnect(options)
+    app.listen(options.port)
     try:
         tornado.ioloop.IOLoop.current().start()
     except KeyboardInterrupt:
         tornado.log.logging.info("Gramps Connect shutting down...")
+        if app.database:
+            app.database.close()

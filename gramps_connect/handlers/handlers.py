@@ -34,7 +34,8 @@ class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
         self.database = None
         self.sitename = None
-        for name in ["database", "sitename"]:
+        self.opts = None
+        for name in ["database", "sitename", "opts"]:
             if name in kwargs:
                 setattr(self, name, kwargs[name])
                 del kwargs[name]
@@ -57,6 +58,7 @@ class BaseHandler(tornado.web.RequestHandler):
             "action": "view",
             "user": self.current_user,
             "sitename": self.sitename,
+            "opts": self.opts,
             "css_theme": "Web_Mainz.css",
             "gramps_version": "5.0",
             "messages": [],

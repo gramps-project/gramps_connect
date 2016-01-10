@@ -1,5 +1,8 @@
 {% extends "gramps-base.html" %}
 
+{% block title %}{{sitename}}: {{opts.database}} {% end %}
+{% block heading %}{{sitename}}: {{opts.database}} {% end %}
+
 {% block content %}
 <h3>Logged in: {{user}}</h3>
 

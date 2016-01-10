@@ -187,9 +187,9 @@ class Form(object):
             commit(self.instance, trans)
 
     def get_person_from_handle(self, handle, env):
-        person = self.database.get_person_from_handle(handle)
-        if person:
-            return nd(person)
-        else:
-            return ""
+        if handle:
+            person = self.database.get_person_from_handle(handle)
+            if person:
+                return nd(person)
+        return ""
 

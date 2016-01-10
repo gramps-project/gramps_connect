@@ -1,6 +1,9 @@
 {% autoescape None %}
 {% extends "gramps-base.html" %}
 
+{% block title %}{{sitename}}: {{opts.database}}, {{tview}} {% end %}
+{% block heading %}{{sitename}}: {{opts.database}}, {{tview}} {% end %}
+
 {% block content %}
 
 <p>Delete {{form.describe()}}?</p>
