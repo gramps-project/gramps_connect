@@ -29,7 +29,7 @@
   </th>
 {% end %}
 </tr>
-{% for row in form.get_rows() %}
+{% for row in form.get_rows(page=page) %}
   <tr>
   {% for col in row %}
       <td>

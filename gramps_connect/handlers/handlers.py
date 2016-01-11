@@ -142,6 +142,7 @@ class PersonHandler(BaseHandler):
                 self.render("person.html",
                             **self.get_template_dict(tview=_("person detail"),
                                                      action=action,
+                                                     page=page,
                                                      form=PersonForm(self.database, _, instance=person),
                                                      logform=None))
                 return
@@ -198,6 +199,7 @@ class FamilyHandler(BaseHandler):
             if family:
                 self.render("family.html",
                             **self.get_template_dict(tview=_("family detail"),
+                                                     page=page,
                                                      action=action,
                                                      form=FamilyForm(self.database, _, instance=family),
                                                      logform=None))

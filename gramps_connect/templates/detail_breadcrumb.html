@@ -1,7 +1,7 @@
 {% autoescape None %}
 
   <p>
-  {{ make_link("/%(view)s", form.tview, view=form.view) }}
+  {{ make_link("/%(view)s?page=%(page)s", form.tview, view=form.view, page=page) }}
   {% if form.instance.gramps_id %}
     > {{ make_link("/%(view)s/%(handle)s", 
                     ("%s [%s]" % (form.describe(), form.instance.gramps_id)), 

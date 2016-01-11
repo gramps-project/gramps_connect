@@ -120,7 +120,7 @@ class Form(object):
                                          filter=self.filter)
         return ""
 
-    def get_rows(self):
+    def get_rows(self, page=1):
         retval = []
         count = (self.page * self.page_size) + 1
         for row in self.rows:
@@ -136,7 +136,7 @@ class Form(object):
                 if self.link:
                     link = self.link % env
                     data = data if data else "&nbsp;"
-                    data = """<a href="%s" class="browsecell">%s</a>""" % (link, data)
+                    data = """<a href="%s?page=%s" class="browsecell">%s</a>""" % (link, page, data)
                 retval_row.append(data)
             retval.append(retval_row)
             count += 1
