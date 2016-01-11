@@ -42,7 +42,7 @@ class FamilyForm(Form):
         "father_handle.primary_name.surname_list.0.surname",
         "father_handle.primary_name.first_name",
         "mother_handle.primary_name.surname_list.0.surname",
-        "mother_handle.primary_name.firstname",
+        "mother_handle.primary_name.first_name",
     ]
 
     # Other fields needed to select:

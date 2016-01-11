@@ -8,16 +8,16 @@ General
 - [x] Delete with confirm
 - [x] Image viewer
 - [x] Paged view for all
-- [ ] Validation and redo (insure unique, give error messages)
+- [ ] Validation and redo (insure unique, give error messages, retry)
 - [ ] Run reports/actions
 - [ ] User settings (password, theme, database, superuser, rw, access to tree, etc)
-- [ ] Search
+- [x] Search
 
 Forms - add, edit, view list
 -----------------
-- [x] Person
-- [ ] Family
-- [ ] Citation/Source (shared)
+- [x] Person (except bools and lists)
+- [ ] Family (started)
+- [ ] Citation/Source (form should be shared)
 - [ ] Source
 - [ ] Event
 - [ ] Media
@@ -34,20 +34,33 @@ Editing
 
 Tabs
 ------
-- [x] Event
-- [ ] Family
-- [ ] Name
-- [ ] Citation
-- [ ] Attribute
 - [ ] Address
-- [ ] Note
-- [ ] Media
-- [ ] Internet
 - [ ] Association
-- [ ] LDS
-- [ ] References
+- [ ] Attribute
 - [ ] Children (for Family)
-- [ ] Reference (for Event, Note, Media, Citation, Source, Place, Repository)
-- [ ] Alternate locations (for Place)
+- [ ] Citation
+- [ ] Citation Reference
+- [ ] Data
+- [ ] Event Reference
+- [x] Event (needs link)
 - [ ] Internet (for Repository)
+- [ ] LDS
+- [ ] Location
+- [ ] Media
+- [ ] Media Reference
+- [ ] Name
+- [ ] Note
+- [ ] Note Reference
+- [ ] Person Reference
+- [ ] Place Reference
+- [ ] Repository Reference
+- [ ] Repository
+- [ ] Source Reference
+- [ ] Surname
+- [ ] Tag Reference
 
+Actions - use CLI forms
+-------
+- [ ] Reports
+- [ ] Import/Export
+- [ ] Tools
