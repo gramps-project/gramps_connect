@@ -22,7 +22,8 @@ import tornado.web
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
 from gramps.gen.utils.id import create_id
-from gramps.gen.lib import Person, Surname
+from gramps.gen.lib import Person, Surname, Family
+from gramps.gen.const import VERSION
 
 from ..forms import PersonForm, FamilyForm
 
@@ -60,7 +61,7 @@ class BaseHandler(tornado.web.RequestHandler):
             "sitename": self.sitename,
             "opts": self.opts,
             "css_theme": "Web_Mainz.css",
-            "gramps_version": "5.0",
+            "gramps_version": VERSION,
             "messages": [],
             "_": self._,
             "next": self.get_argument("next", None),

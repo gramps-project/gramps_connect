@@ -12,6 +12,7 @@ class PersonForm(Form):
     view = "person"
     tview = "People"
 
+    # Fields for editor:
     edit_fields = [
         "primary_name.type",
         "primary_name.title",
@@ -28,22 +29,32 @@ class PersonForm(Form):
         "private",
     ]
 
+    # URL for page view rows:
     link = "/person/%(handle)s"
 
+    # Special search operations:
     search_ops = {
         "primary_name.surname_list.surname": "NI",
         "tag_list": "NI",
     }
 
+    # Search fields to use if not specified:
     default_search_fields = [
         "primary_name.surname_list.0.surname",
         "primary_name.first_name",
     ]
 
-    search_terms = [
-        "surname", "given", "id", "gender", "birth", "death",
-    ]
+    # Search fields, list is OR
+    search_terms = {
+        "surname": "surname", 
+        "given": "given", 
+        "id": "gramps_id", 
+        "gender": "gender", 
+        "birth": "birth", 
+        "death": "death",
+    }
 
+    # Fields for page view:
     select_fields = [
         "primary_name.surname_list.0.surname",
         "primary_name.first_name",
@@ -53,11 +64,13 @@ class PersonForm(Form):
         "death_ref_index",
     ]
 
+    # Other fields needed to select:
     env_fields = [
         "handle",
         "event_ref_list",
     ]
 
+    # Does the interator support a sort_handles flag?
     sort = True
 
     def set_post_process_functions(self):

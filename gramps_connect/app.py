@@ -68,6 +68,8 @@ class GrampsConnect(Application):
             raise Exception("Need to specify Gramps Family Tree name with --database='NAME'")
         else:
             self.database = DbState().open_database(self.options.database)
+        if self.database is None:
+            raise Exception("Unable to open database '%s'" % self.options.database)
         self.sitename = self.options.sitename
         super().__init__([
             url(r"/", MainHandler,

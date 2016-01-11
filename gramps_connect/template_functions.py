@@ -249,15 +249,13 @@ def name_table(form, user, action, link=None, **kwargs):
         (form._("Source"), 10),
         (form._("Note Preview"), 10),
     )
-    # if user or form.instance.public:
-    #     links = []
-    #     for name in obj.name_set.all().order_by("order"):
-    #         obj_type = ContentType.objects.get_for_model(name)
-    #         citationq = db.dji.CitationRef.filter(object_type=obj_type,
-    #                                            object_id=name.id).count() > 0
-    #         note_refs = db.dji.NoteRef.filter(object_type=obj_type,
-    #                                        object_id=name.id)
-    #         note = ""
+    if user or form.instance.public:
+         links = []
+         for name in form.instance.alternate_names:
+             for citation_ref in name:
+                 note = form.database.get_note_from_handle(note_ref.ref)
+             for note_ref in name:
+                 note = form.database.get_note_from_handle(note_ref.ref)
     #         if note_refs.count() > 0:
     #             try:
     #                 note = db.dji.Note.get(id=note_refs[0].object_id).text[:50]

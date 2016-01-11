@@ -16,7 +16,7 @@ class Form(object):
     select_fields = []
     env_fields = []
     post_process_functions = {}
-    search_terms = []
+    search_terms = {}
     link = None
     filter = None
     page_size = 25
@@ -90,11 +90,20 @@ class Form(object):
             filter = []
             for (field, op, term) in filt_list:
                 # check for named aliases:
-                field = self.database._tables[self.table]["class_func"].get_field_alias(field)
-                # check for special op:
-                if field in self.search_ops:
-                    op = self.search_ops[field]
-                filter.append((field, op, term))
+                field = self.search_terms.get(field, field)
+                if isinstance(field, (list, tuple)):
+                    for field in field:
+                        field = self.database._tables[self.table]["class_func"].get_field_alias(field)
+                        # check for special op:
+                        if field in self.search_ops:
+                            op = self.search_ops[field]
+                        filter.append((field, op, term))
+                else:
+                    field = self.database._tables[self.table]["class_func"].get_field_alias(field)
+                    # check for special op:
+                    if field in self.search_ops:
+                        op = self.search_ops[field]
+                    filter.append((field, op, term))
             self.filter = [["OR", filter]]
         else:
             self.filter = None

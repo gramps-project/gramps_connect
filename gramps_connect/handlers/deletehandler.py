@@ -35,7 +35,8 @@ class DeleteHandler(BaseHandler):
         self.render('delete.html',
                     **self.get_template_dict(form=form,
                                              table=table,
-                                             handle=handle))
+                                             handle=handle,
+                                             tview="delete"))
     @tornado.web.authenticated
     def post(self, table, handle):
         transaction = self.database.get_transaction_class()
