@@ -104,7 +104,12 @@ class Form(object):
                     if field in self.search_ops:
                         op = self.search_ops[field]
                     filter.append((field, op, term))
-            self.filter = [["OR", filter]]
+            if len(filter) == 0:
+                self.filter = None
+            elif len(filter) == 1:
+                self.filter = filter[0]
+            else:
+                self.filter = ["OR", filter]
         else:
             self.filter = None
         self.log.info("filter: " + str(self.filter))

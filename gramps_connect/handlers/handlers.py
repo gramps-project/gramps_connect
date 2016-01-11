@@ -19,6 +19,7 @@
 #
 
 import tornado.web
+import logging
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
 from gramps.gen.utils.id import create_id
@@ -33,6 +34,7 @@ exec("from gramps_connect.template_functions import *",
 
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
+        self.log = logging.getLogger(".Handler")
         self.database = None
         self.sitename = None
         self.opts = None
