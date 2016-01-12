@@ -31,12 +31,6 @@ class FamilyForm(Form):
         "id": "gramps_id",
     }
 
-    # Special search operations:
-    search_ops = {
-        "father_handle.primary_name.surname_list.surname": "NI",
-        "father_handle.primary_name.surname_list.surname": "NI",
-        }
-
     # Search fields to use if not specified:
     default_search_fields = [
         "father_handle.primary_name.surname_list.0.surname",

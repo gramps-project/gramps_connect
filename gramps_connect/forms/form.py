@@ -81,9 +81,6 @@ class Form(object):
         elif " LIKE " in search_pair:
             field, term = [s.strip() for s in search_pair.split(" LIKE ", 1)]
             return self.expand_fields(field, "LIKE", term)
-        elif " NI " in search_pair: #  IN, reversed
-            field, term = [s.strip() for s in search_pair.split(" NI ", 1)]
-            return self.expand_fields(field, "NI", term)
         elif "!=" in search_pair:
             field, term = [s.strip() for s in search_pair.split("!=", 1)]
             return self.expand_fields(field, "!=", term)
@@ -109,16 +106,10 @@ class Form(object):
             or_filter = []
             for field in field:
                 field = self.database._tables[self.table]["class_func"].get_field_alias(field)
-                # check for special op:
-                if field in self.search_ops:
-                    op = self.search_ops[field]
                 or_filter.append((field, op, term))
             return ["OR", or_filter]
         else:
             field = self.database._tables[self.table]["class_func"].get_field_alias(field)
-            # check for special op:
-            if field in self.search_ops:
-                op = self.search_ops[field]
             return (field, op, term)
 
     def fix_term(self, term):

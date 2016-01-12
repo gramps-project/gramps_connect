@@ -32,16 +32,11 @@ class PersonForm(Form):
     # URL for page view rows:
     link = "/person/%(handle)s"
 
-    # Special search operations:
-    search_ops = {
-        "primary_name.surname_list.surname": "NI",
-        "tag_list": "NI",
-    }
-
     # Search fields to use if not specified:
     default_search_fields = [
         "primary_name.surname_list.0.surname",
         "primary_name.first_name",
+        # FIXME: add alternate names
     ]
 
     # Search fields, list is OR
