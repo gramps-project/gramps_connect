@@ -68,50 +68,89 @@ class Form(object):
                 (" | <b>Showing</b>: %s/%s in %f seconds" % (matching, records, self.rows.time)) +
                 "</div>")
 
+    def parse(self, search_pair):
+        """
+        search_pair: field OP value | search_pair OR search_pair
+        """
+        if " OR " in search_pair: 
+            search_pairs = [s.strip() for s in search_pair.split(" OR ")]
+            return ["OR", [self.parse(pair) for pair in search_pairs]]
+        elif " AND " in search_pair: 
+            search_pairs = [s.strip() for s in search_pair.split(" AND ")]
+            return ["AND", [self.parse(pair) for pair in search_pairs]]
+        elif " LIKE " in search_pair:
+            field, term = [s.strip() for s in search_pair.split(" LIKE ", 1)]
+            return self.expand_fields(field, "LIKE", term)
+        elif " NI " in search_pair: #  IN, reversed
+            field, term = [s.strip() for s in search_pair.split(" NI ", 1)]
+            return self.expand_fields(field, "NI", term)
+        elif "!=" in search_pair:
+            field, term = [s.strip() for s in search_pair.split("!=", 1)]
+            return self.expand_fields(field, "!=", term)
+        elif "=" in search_pair:
+            field, term = [s.strip() for s in search_pair.split("=", 1)]
+            return self.expand_fields(field, "=", term)
+        else: # search all defaults, OR
+            or_filter = []
+            for field in self.default_search_fields:
+                term = search_pair.strip()
+                or_filter.append(self.expand_fields(field, "LIKE", term))
+            return ["OR", or_filter]
+
+    def expand_fields(self, field, op, term):
+        """
+        Return (field, op, term) or ["OR", ...]
+        """
+        # check for named aliases:
+        field = self.search_terms.get(field, field)
+        term = self.fix_term(term)
+        # replace term for common values
+        if isinstance(field, (list, tuple)):
+            or_filter = []
+            for field in field:
+                field = self.database._tables[self.table]["class_func"].get_field_alias(field)
+                # check for special op:
+                if field in self.search_ops:
+                    op = self.search_ops[field]
+                or_filter.append((field, op, term))
+            return ["OR", or_filter]
+        else:
+            field = self.database._tables[self.table]["class_func"].get_field_alias(field)
+            # check for special op:
+            if field in self.search_ops:
+                op = self.search_ops[field]
+            return (field, op, term)
+
+    def fix_term(self, term):
+        """
+        Turn string terms into common values
+        """
+        if term == "[]":
+            term = []
+        elif term == "None":
+            term = None
+        elif term.isdigit():
+            term = int(term)
+        elif term == '""':
+            term = ""
+        elif term == "''":
+            term = ""
+        return term
+
     def select(self, page=1, search=None):
         self.page = page - 1
         self.search = search
+        self.filter = None
         if search:
-            ## FIXME: currently there is only OR in the parser; need to add AND
-            searches = search.split(",")
-            filt_list = []
+            searches = search.split(",") # top-level ANDs
+            filter = []
             # get all filter terms:
             for search_pair in searches:
-                if "=" in search_pair:
-                    field, term = [s.strip() for s in search_pair.split("=", 1)]
-                    op = "LIKE"
-                    filt_list.append((field, op, term))
-                else: # search all defaults
-                    for field in self.default_search_fields:
-                        op = "LIKE"
-                        term = search_pair.strip()
-                        filt_list.append((field, op, term))
-            # check filter terms for alias, special ops:
-            filter = []
-            for (field, op, term) in filt_list:
-                # check for named aliases:
-                field = self.search_terms.get(field, field)
-                if isinstance(field, (list, tuple)):
-                    for field in field:
-                        field = self.database._tables[self.table]["class_func"].get_field_alias(field)
-                        # check for special op:
-                        if field in self.search_ops:
-                            op = self.search_ops[field]
-                        filter.append((field, op, term))
-                else:
-                    field = self.database._tables[self.table]["class_func"].get_field_alias(field)
-                    # check for special op:
-                    if field in self.search_ops:
-                        op = self.search_ops[field]
-                    filter.append((field, op, term))
-            if len(filter) == 0:
-                self.filter = None
-            elif len(filter) == 1:
+                filter.append(self.parse(search_pair))
+            if len(filter) == 1:
                 self.filter = filter[0]
-            else:
-                self.filter = ["OR", filter]
-        else:
-            self.filter = None
+            elif len(filter) > 1:
+                self.filter = ["AND", filter]
         self.log.info("filter: " + str(self.filter))
         self.rows = self.database.select(self.table,
                                          self.select_fields + self.env_fields,
