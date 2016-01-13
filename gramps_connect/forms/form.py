@@ -54,6 +54,7 @@ class Form(object):
         return query
 
     def get_page_controls(self, page):
+        total = self.database._tables[self.table]["count_func"]()
         records = self.rows.total
         matching = len(self.rows)
         total_pages = math.ceil(records / self.page_size)
@@ -65,7 +66,7 @@ class Form(object):
                 make_button(">", self.make_query(page=min(page + 1, total_pages))) +
                 " | " +
                 make_button(">>", self.make_query(page=total_pages)) +
-                (" | <b>Showing</b>: %s/%s in %f seconds" % (matching, records, self.rows.time)) +
+                (" | <b>Showing</b> %s/%s <b>of</b> %s <b>in</b> %.4g seconds" % (matching, records, total, round(self.rows.time, 4))) +
                 "</div>")
 
     def parse(self, search_pair):
@@ -116,16 +117,16 @@ class Form(object):
         """
         Turn string terms into common values
         """
+        term = term.strip()
         if term == "[]":
             term = []
         elif term == "None":
             term = None
         elif term.isdigit():
             term = int(term)
-        elif term == '""':
-            term = ""
-        elif term == "''":
-            term = ""
+        elif ((term.startswith('"') and term.endswith('"')) or
+              (term.startswith("'") and term.endswith("'"))):
+            term = term[1:-1]
         return term
 
     def select(self, page=1, search=None):
