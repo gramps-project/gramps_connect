@@ -1,6 +1,6 @@
 from gramps.gen.lib.family import Family
 
-from .form import Form
+from .forms import Form
 
 class FamilyForm(Form):
     """

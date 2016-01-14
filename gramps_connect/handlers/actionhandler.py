@@ -1,5 +1,5 @@
 from .handlers import BaseHandler
-from ..forms.action import ActionForm
+from ..forms.actionform import ActionForm
 
 import tornado.web
 

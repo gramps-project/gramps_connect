@@ -1,4 +1,4 @@
-from .form import Form, Column, Row
+from .forms import Form, Column, Row
 
 class ActionForm(Form):
     """

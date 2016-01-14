@@ -306,55 +306,13 @@ function buttonOut(button) {
     {% block navigation %}
     <div class="container">
     <ul class="menu" id="dropmenu">
-    <li {# tview|currentSection:"home" #}><a href="/">Home</a></li>
-    {% for title in menu %}
-         {# (<Nice name>, /<path>/, <Model> | None, Need authentication ) #}
-         {% if title3 %} 
-	   {% if user %}
-                <li {# tview|currentSection:title.1 #}>
-	        {% if title1 %}
-                   <a href="/{# title.1 #}/">{# title.0 #}</a>
-		</li>
-	        {% else %}
-                   <a href="/">{# title.0 #}</a>
-                </li>
-	        {% end %}
-	   {% else %}
-                {# don't show #}
-           {% end %}
-        {% else %}
-                <li {# tview|currentSection:title.1 #}>
-	        {% if title1 %}
-                   <a href="/{# title.1 #}/"
-		      onmouseover="showMenu('{# title.1 #}')" 
-		      onmouseout="startTimer()" 
-		      style="cursor:pointer"  
-		      href="/browse/">{# title.0 #}</a>
-<DIV CLASS="popupMenu" ID="menu_browse" STYLE="display:none;">
-  <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
-  <TR ID="opt_person"><TD><A ONMOUSEOVER="hiLite('person')" ONMOUSEOUT="unLite('person')" ONCLICK="optClick('/person/')">People</A></TD></TR>
-  <TR ID="opt_family"><TD><A ONMOUSEOVER="hiLite('family')" ONMOUSEOUT="unLite('family')" ONCLICK="optClick('/family/')">Families</A></TD></TR>
-  <TR ID="opt_event"><TD><A ONMOUSEOVER="hiLite('event')" ONMOUSEOUT="unLite('event')" ONCLICK="optClick('/event/')">Events</A></TD></TR>
-  <TR ID="opt_note"><TD><A ONMOUSEOVER="hiLite('note')" ONMOUSEOUT="unLite('note')" ONCLICK="optClick('/note/')">Note</A></TD></TR>
-  <TR ID="opt_media"><TD><A ONMOUSEOVER="hiLite('media')" ONMOUSEOUT="unLite('media')" ONCLICK="optClick('/media/')">Media</A></TD></TR>
-  <TR ID="opt_citation"><TD><A ONMOUSEOVER="hiLite('citation')" ONMOUSEOUT="unLite('citation')" ONCLICK="optClick('/citation/')">Citations</A></TD></TR>
-  <TR ID="opt_source"><TD><A ONMOUSEOVER="hiLite('source')" ONMOUSEOUT="unLite('source')" ONCLICK="optClick('/source/')">Sources</A></TD></TR>
-  <TR ID="opt_place"><TD><A ONMOUSEOVER="hiLite('place')" ONMOUSEOUT="unLite('place')" ONCLICK="optClick('/place/')">Places</A></TD></TR>
-  <TR ID="opt_repository"><TD><A ONMOUSEOVER="hiLite('repsoitory')" ONMOUSEOUT="unLite('repository')" ONCLICK="optClick('/repository/')">Repository</A></TD></TR>
-  <TR ID="opt_tag"><TD><A ONMOUSEOVER="hiLite('tag')" ONMOUSEOUT="unLite('tag')" ONCLICK="optClick('/tag/')">Tags</A></TD></TR>
-</TABLE>
-</DIV>
-                </li>
-	        {% else %}
-                   <a href="/">{# title.0 #}</a></li>
-	        {% end %}
-	{% end %}
-    {% end %}
     {% if user %}
+         <li><a href="/">Home</a></li>
+         <li><a href="/action">Actions</a></li>
 	 {% if next %}
-         <li><a href="/logout/?next={# next #}">Logout</a></li>
+             <li><a href="/logout/?next={# next #}">Logout</a></li>
 	 {% else %}
-         <li><a href="/logout">Logout</a></li>
+             <li><a href="/logout">Logout</a></li>
 	 {% end %}         
     {% else %}
 	 {% if next %}

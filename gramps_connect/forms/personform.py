@@ -3,7 +3,7 @@ from gramps.gen.display.name import NameDisplay
 
 nd = NameDisplay().display
 
-from .form import Form
+from .forms import Form
 
 class PersonForm(Form):
     """

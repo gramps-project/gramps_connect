@@ -23,10 +23,7 @@ import logging
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
 from gramps.gen.utils.id import create_id
-from gramps.gen.lib import Person, Surname, Family
 from gramps.gen.const import VERSION
-
-from ..forms import PersonForm, FamilyForm
 
 template_functions = {}
 exec("from gramps_connect.template_functions import *",
@@ -76,6 +73,7 @@ class BaseHandler(tornado.web.RequestHandler):
         """
         Return the proper form, give a table name.
         """
+        from ..forms import PersonForm, FamilyForm
         if table == "person":
             form = PersonForm
         elif table == "family":
@@ -84,10 +82,10 @@ class BaseHandler(tornado.web.RequestHandler):
             raise Exception("invalid form")
         return form
 
-class MainHandler(BaseHandler):
+class HomeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render('index.html', **self.get_template_dict())
+        self.render('home.html', **self.get_template_dict())
 
 class LoginHandler(BaseHandler):
     def get(self):
@@ -115,119 +113,3 @@ class LogoutHandler(BaseHandler):
         self.redirect(self.get_argument("next",
                                         self.reverse_url("main")))
 
-class PersonHandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self, path=""):
-        """
-        HANDLE
-        HANDLE/edit|delete
-        /add
-        b2cfa6ca1e174b1f63d/remove/eventref/1
-        """
-        page = int(self.get_argument("page", 1))
-        search = self.get_argument("search", "")
-        if "/" in path:
-            handle, action= path.split("/", 1)
-        else:
-            handle, action = path, "view"
-        if handle:
-            if handle == "add":
-                person = Person()
-                person.primary_name.surname_list.append(Surname())
-                action = "edit"
-            else:
-                person = self.database.get_person_from_handle(handle)
-            if person:
-                person.probably_alive = True
-                self.render("person.html",
-                            **self.get_template_dict(tview=_("person detail"),
-                                                     action=action,
-                                                     page=page,
-                                                     form=PersonForm(self.database, _, instance=person),
-                                                     logform=None))
-                return
-            else:
-                self.clear()
-                self.set_status(404)
-                self.finish("<html><body>No such person</body></html>")
-                return
-        self.render("page_view.html",
-                    **self.get_template_dict(tview=_("person view"),
-                                             page=page,
-                                             search=search,
-                                             form=PersonForm(self.database, _, table="Person"),
-                                         )
-                )
-
-    @tornado.web.authenticated
-    def post(self, path):
-        if "/" in path:
-            handle, action = path.split("/")
-        else:
-            handle, action = path, "view"
-        if handle == "add":
-            person = Person()
-            person.primary_name.surname_list.append(Surname())
-            person.handle = handle = create_id()
-        else:
-            person = self.database.get_person_from_handle(handle)
-        form = PersonForm(self.database, _, instance=person)
-        form.save(handler=self)
-        self.redirect("/person/%(handle)s" % {"handle": handle})
-
-class FamilyHandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self, path=""):
-        """
-        HANDLE
-        HANDLE/edit|delete
-        /add
-        b2cfa6ca1e174b1f63d/remove/eventref/1
-        """
-        page = int(self.get_argument("page", 1))
-        search = self.get_argument("search", "")
-        if "/" in path:
-            handle, action= path.split("/", 1)
-        else:
-            handle, action = path, "view"
-        if handle:
-            if handle == "add":
-                family = Family()
-                action = "edit"
-            else:
-                family = self.database.get_family_from_handle(handle)
-            if family:
-                self.render("family.html",
-                            **self.get_template_dict(tview=_("family detail"),
-                                                     page=page,
-                                                     action=action,
-                                                     form=FamilyForm(self.database, _, instance=family),
-                                                     logform=None))
-                return
-            else:
-                self.clear()
-                self.set_status(404)
-                self.finish("<html><body>No such family</body></html>")
-                return
-        self.render("page_view.html",
-                    **self.get_template_dict(tview=_("family view"),
-                                             page=page,
-                                             search=search,
-                                             form=FamilyForm(self.database, _, table="Family"),
-                                         )
-                )
-
-    @tornado.web.authenticated
-    def post(self, path):
-        if "/" in path:
-            handle, action = path.split("/")
-        else:
-            handle, action = path, "view"
-        if handle == "add":
-            family = Family()
-            family.handle = handle = create_id()
-        else:
-            family = self.database.get_family_from_handle(handle)
-        form = FamilyForm(self.database, _, instance=family)
-        form.save(handler=self)
-        self.redirect("/family/%(handle)s" % {"handle": handle})

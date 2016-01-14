@@ -72,7 +72,7 @@ class GrampsConnect(Application):
             raise Exception("Unable to open database '%s'" % self.options.database)
         self.sitename = self.options.sitename
         super().__init__([
-            url(r"/", MainHandler,
+            url(r"/", HomeHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,

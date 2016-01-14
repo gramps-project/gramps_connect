@@ -18,5 +18,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from .person import PersonForm
-from .family import FamilyForm
+from .personform import PersonForm
+from .familyform import FamilyForm
+from .actionform import ActionForm

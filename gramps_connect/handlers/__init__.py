@@ -19,6 +19,8 @@
 #
 
 from .handlers import *
+from .personhandler import PersonHandler
+from .familyhandler import FamilyHandler
 from .imagehandler import ImageHandler
 from .deletehandler import DeleteHandler
 from .jsonhandler import JsonHandler
