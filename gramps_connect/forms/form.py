@@ -7,16 +7,28 @@ from gramps.gen.display.name import NameDisplay
 
 nd = NameDisplay().display
 
-class Action(object):
+class Row(list):
     """
     """
 
+class Column(object):
+    """
+    """
+    def __init__(self, string, width):
+        self.string = string
+        self.width = width
+
+    def __str__(self):
+        return self.string
+
+    def __len__(self):
+        return len(self.string)
+            
 class Form(object):
     """
     """
-    _class = Action
+    _class = None
     edit_fields = []
-    column_headings = []
     select_fields = []
     env_fields = []
     post_process_functions = {}
@@ -25,6 +37,7 @@ class Form(object):
     filter = None
     page_size = 25
     sort = False
+    count_width = 5
 
     def __init__(self, database, _, instance=None, table=None):
         # scheme is a map from FIELD to Python Type, list[Gramps objects], or Handle
@@ -153,22 +166,41 @@ class Form(object):
                 self.filter = ["AND", filter]
         self.log.info("filter: " + str(self.filter))
         self.rows = self.database.select(self.table,
-                                         self.select_fields + self.env_fields,
+                                         self.get_select_fields() + self.env_fields,
                                          self.sort, self.page * self.page_size,
                                          limit=self.page_size,
                                          filter=self.filter)
         return ""
 
-    def get_rows(self, page=1):
+    def get_select_fields(self):
+        return [field for (field, width) in self.select_fields]
+
+    def get_select_field(self, position):
+        return [field for (field, width) in self.select_fields][position]
+
+    def get_select_widths(self):
+        return [width for (field, width) in self.select_fields]
+
+    def get_select_width(self, position):
+        return [width for (field, width) in self.select_fields][position]
+
+    def get_rows(self, page=0):
+        self.log.info("page=" + str(page))
         retval = []
         count = (self.page * self.page_size) + 1
+        url = """<a href="%s?page=%s" class="browsecell">%s</a>"""
         for row in self.rows:
-            retval_row = [count]
+            retval_row = Row()
             env = {}
             for field_name in self.env_fields:
                 data = row[field_name]
                 env[field_name] = data
-            for field_name in self.select_fields:
+            if self.link:
+                link = self.link % env
+                retval_row.append(Column(url % (link, page, count), self.count_width))
+            else:
+                retval_row.append(Column(count, self.count_width))
+            for field_name, field_width in self.select_fields:
                 data = row[field_name]
                 if field_name in self.post_process_functions:
                     data = self.post_process_functions[field_name](data, env)
@@ -176,15 +208,16 @@ class Form(object):
                     link = self.link % env
                     data = data if data else "&nbsp;"
                     data = """<a href="%s?page=%s" class="browsecell">%s</a>""" % (link, page, data)
-                retval_row.append(data)
+                retval_row.append(Column(data, field_width))
             retval.append(retval_row)
             count += 1
         return retval
 
     def get_column_labels(self):
-        headings = ["#"]
-        for field in self.select_fields:
-            headings.append(self._class.get_label(field, self._))
+        headings = Row()
+        headings.append(Column("#", self.count_width))
+        for field, width in self.select_fields:
+            headings.append(Column(self._class.get_label(field, self._), width))
         return headings
 
     def describe(self):

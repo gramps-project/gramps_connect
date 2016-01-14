@@ -24,7 +24,7 @@
 </tr>
 <tr>
 {% for col in form.get_column_labels() %}
-  <th>
+  <th width="{{col.width}}%">
     {{col}}
   </th>
 {% end %}
@@ -32,7 +32,7 @@
 {% for row in form.get_rows(page=page) %}
   <tr>
   {% for col in row %}
-      <td>
+      <td width="{{col.width}}%">
       {{col}}
       </td>
   {% end %}

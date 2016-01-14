@@ -49,14 +49,14 @@ class PersonForm(Form):
         "death": "death",
     }
 
-    # Fields for page view:
+    # Fields for page view; width sum = 95%:
     select_fields = [
-        "primary_name.surname_list.0.surname",
-        "primary_name.first_name",
-        "gramps_id",
-        "gender",
-        "birth_ref_index",
-        "death_ref_index",
+        ("primary_name.surname_list.0.surname", 25),
+        ("primary_name.first_name", 20),
+        ("gramps_id", 10),
+        ("gender", 10),
+        ("birth_ref_index", 15),
+        ("death_ref_index", 15),
     ]
 
     # Other fields needed to select:

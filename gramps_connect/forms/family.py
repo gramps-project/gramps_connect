@@ -16,12 +16,12 @@ class FamilyForm(Form):
     # URL for page view rows:
     link = "/family/%(handle)s"
 
-    # Fields for page view:
+    # Fields for page view; width sum = 95%:
     select_fields = [
-        "gramps_id",
-        "father_handle",
-        "mother_handle",
-        "type.string",
+        ("gramps_id", 10),
+        ("father_handle", 30),
+        ("mother_handle", 30),
+        ("type.string", 25),
     ]
 
     # Search fields, list is OR:

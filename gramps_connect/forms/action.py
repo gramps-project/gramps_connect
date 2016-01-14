@@ -1,4 +1,4 @@
-from .form import Form
+from .form import Form, Column, Row
 
 class ActionForm(Form):
     """
@@ -22,7 +22,7 @@ class ActionForm(Form):
 
     # Fields for page view:
     select_fields = [
-        "name",
+        ("name", 95),
     ]
 
     # Other fields needed to select:
@@ -41,11 +41,11 @@ class ActionForm(Form):
         return self.instance
 
     def get_column_labels(self):
-        return ["#", "Action"]
+        return Row([Column("#", self.count_width), Column("Action", 95)])
 
     def select(self, page=1, search=None):
         self.search = search
-        self.page = page
+        self.page = page - 1
         class Actions(list):
             total = 2
             time = 0.0
