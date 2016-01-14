@@ -7,10 +7,14 @@ from gramps.gen.display.name import NameDisplay
 
 nd = NameDisplay().display
 
+class Action(object):
+    """
+    """
+
 class Form(object):
     """
     """
-    _class = None
+    _class = Action
     edit_fields = []
     column_headings = []
     select_fields = []
@@ -26,10 +30,11 @@ class Form(object):
         # scheme is a map from FIELD to Python Type, list[Gramps objects], or Handle
         if table:
             self._class = database._tables[table]["class_func"]
+        if self._class:
+            self.schema = self._class.get_schema()
         self.table = table
         self.filter = None
         self.database = database
-        self.schema = self._class.get_schema()
         self.instance = instance
         self._ = _
         self.log = logging.getLogger(".Form")
@@ -53,8 +58,11 @@ class Form(object):
                 query += "%s=%s" % (kw, kwargs[kw])
         return query
 
+    def get_get_table_count(self):
+        return self.database._tables[self.table]["count_func"]()
+
     def get_page_controls(self, page):
-        total = self.database._tables[self.table]["count_func"]()
+        total = self.get_get_table_count()
         records = self.rows.total
         matching = len(self.rows)
         total_pages = math.ceil(records / self.page_size)

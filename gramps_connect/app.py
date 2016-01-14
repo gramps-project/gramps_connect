@@ -98,6 +98,20 @@ class GrampsConnect(Application):
                     "opts" : self.options,
                 },
             ),
+            url(r'/action/(.*)', ActionHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+                name="action"),
+            url(r'/action', ActionHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+            ),
             url(r'/person/(.*)', PersonHandler,
                 {
                     "database": self.database,
