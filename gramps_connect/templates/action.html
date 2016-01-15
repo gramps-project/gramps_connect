@@ -1,0 +1,24 @@
+{% autoescape None %}
+{% extends "gramps-base.html" %}
+
+{% block title %}{{sitename}}: {{opts.database}}, {{tview}} {% end %}
+{% block heading %}{{sitename}}: {{opts.database}}, {{tview}} {% end %}
+
+{% block content %} 
+
+<form>
+<p>Action: {{form.id}}</p>
+
+<table>
+
+{% for (key,value) in sorted(form.get_fields(form.id).items()) %}
+<tr>
+        <td>{{value[1]}}: </td>
+        <td width="60%"><input type="text" size="70" value="{{form.get_field_value(form.id, key)}}"></input></td>
+</tr>
+{% end %}
+</table>
+<input type="button" value="Run"></input>
+</form>
+
+{% end %}
