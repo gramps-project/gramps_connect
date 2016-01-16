@@ -71,11 +71,11 @@ class Form(object):
                 query += "%s=%s" % (kw, kwargs[kw])
         return query
 
-    def get_get_table_count(self):
+    def get_table_count(self):
         return self.database._tables[self.table]["count_func"]()
 
     def get_page_controls(self, page):
-        total = self.get_get_table_count()
+        total = self.get_table_count()
         records = self.rows.total
         matching = len(self.rows)
         total_pages = math.ceil(records / self.page_size)

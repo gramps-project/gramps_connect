@@ -1,5 +1,5 @@
 from .handlers import BaseHandler
-from ..forms.actionform import ActionForm
+from ..forms.actionform import ActionForm, Action, Table
 
 import tornado.web
 
@@ -21,11 +21,13 @@ class ActionHandler(BaseHandler):
         else:
             handle, action = path, "view"
         if handle:
+            table = Table()
+            action = table.get_item_by_handle(handle)
             self.render("action.html",
                         **self.get_template_dict(tview=_("action detail"),
                                                  page=page,
                                                  search=search,
-                                                 form=ActionForm(self.database, _, id=handle),
+                                                 form=ActionForm(self.database, _, instance=action),
                                              )
                     )
         else:
@@ -33,7 +35,11 @@ class ActionHandler(BaseHandler):
                         **self.get_template_dict(tview=_("action view"),
                                                  page=page,
                                                  search=search,
-                                                 form=ActionForm(self.database, _),
+                                                 form=ActionForm(self.database, _, table="Action"),
                                              )
                     )
 
+    @tornado.web.authenticated
+    def post(self, handle):
+        # Run report here
+        self.redirect("/action")

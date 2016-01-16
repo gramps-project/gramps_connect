@@ -6,19 +6,23 @@
 
 {% block content %} 
 
-<form>
-<p>Action: {{form.id}}</p>
+{% include "detail_breadcrumb.html" %}
+
+<form method="post">{% module xsrf_form_html() %}
 
 <table>
-
-{% for (key,value) in sorted(form.get_fields(form.id).items()) %}
-<tr>
-        <td>{{value[1]}}: </td>
-        <td width="60%"><input type="text" size="70" value="{{form.get_field_value(form.id, key)}}"></input></td>
-</tr>
+{% for (key,value) in sorted(form.get_fields(form.instance.handle).items()) %}
+   <tr>
+        <td align="right">{{key}}: </td>
+        <td width="80%"><input type="text" size="70" value="{{form.get_field_value(form.instance.handle, key)}}"></input></td>
+   </tr>
+   <tr>
+	<td>          </td>
+	<td>{{value[1]}}</td>
+   </tr>
 {% end %}
 </table>
-<input type="button" value="Run"></input>
+<input type="submit" value="Run {{form.instance.name}}"></input>
 </form>
 
 {% end %}
