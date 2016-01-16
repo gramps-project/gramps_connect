@@ -1,7 +1,7 @@
 Gramps Connect
 ==============
 
-This is a list of the things needed to finish.
+Current Status 
 
 General
 -------
@@ -9,22 +9,45 @@ General
 - [x] Image viewer
 - [x] Paged view for all
 - [ ] Validation and redo (insure unique, give error messages, retry)
-- [ ] Run reports/actions
-- [ ] User settings (password, theme, database, superuser, rw, access to tree, etc)
+- [ ] Actions
+  - [x] List, search, view
+  - [ ] Where do they go? How to notify? In background?
+  - [x] Reports
+  - [ ] Exports
+  - [ ] Imports
+- [ ] User settings (password, theme, database, superuser, rw, access to tree, preferred output format (html, pdf, svg))
 - [x] Search
 
 Forms - add, edit, view list
 -----------------
 - [x] Person (except bools and lists)
-- [ ] Family (started)
+- [ ] Family 
+  - [x] List
+  - [ ] View and Edit
 - [ ] Citation/Source (form should be shared)
+  - [ ] List
+  - [ ] View and Edit
 - [ ] Source
+  - [ ] List
+  - [ ] View and Edit
 - [ ] Event
+  - [ ] List
+  - [ ] View and Edit
 - [ ] Media
+  - [ ] List
+  - [ ] View and Edit
 - [ ] Place
+  - [ ] List
+  - [ ] View and Edit
 - [ ] Repository
+  - [ ] List
+  - [ ] View and Edit
 - [ ] Note
+  - [ ] List
+  - [ ] View and Edit
 - [ ] Tag
+  - [ ] List
+  - [ ] View and Edit
 
 Editing
 -------
@@ -59,8 +82,3 @@ Tabs
 - [ ] Surname
 - [ ] Tag Reference
 
-Actions - use CLI forms
--------
-- [ ] Reports
-- [ ] Import/Export
-- [ ] Tools
