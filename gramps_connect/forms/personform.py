@@ -1,12 +1,36 @@
+#
+# Gramps - a GTK+/GNOME based genealogy program
+#
+# Copyright (c) 2015 Gramps Development Team
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+# Gramps imports:
 from gramps.gen.lib.person import Person
 from gramps.gen.display.name import NameDisplay
 
-nd = NameDisplay().display
-
+# Gramps Connect imports:
 from .forms import Form
+
+# Globals:
+nd = NameDisplay().display
 
 class PersonForm(Form):
     """
+    A form for listing, viewing, and editing a Person object.
     """
     _class = Person
     view = "person"
@@ -69,6 +93,9 @@ class PersonForm(Form):
     sort = True
 
     def set_post_process_functions(self):
+        """
+        Set the post_process_functions dictionary.
+        """
         self.post_process_functions = {
             "gender": self.render_gender,
             "birth_ref_index": self.event_index,
@@ -77,6 +104,9 @@ class PersonForm(Form):
         }
 
     def event_index(self, index, env):
+        """
+        Used for revent_ref_index lookups.
+        """
         if 0 <= index < len(env["event_ref_list"]):
             event_ref = env["event_ref_list"][index]
             if event_ref.ref:
@@ -86,10 +116,19 @@ class PersonForm(Form):
         return ""
 
     def render_gender(self, gender_code, env):
-        return ["Female", "Male", "Unknown"][gender_code]
+        """
+        Text for gender codes.
+        """
+        return [self._("Female"), self._("Male"), self._("Unknown")][gender_code]
 
     def describe(self):
+        """
+        Textual description of this instance.
+        """
         return nd(self.instance)
 
     def probably_alive(self):
+        """
+        Placeholder for a probably_alive value.
+        """
         return True

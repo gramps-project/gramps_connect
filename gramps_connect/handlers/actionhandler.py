@@ -1,9 +1,30 @@
+#
+# Gramps - a GTK+/GNOME based genealogy program
+#
+# Copyright (c) 2015 Gramps Development Team
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
 from .handlers import BaseHandler
 from ..forms.actionform import ActionForm, Action, Table
 
 import tornado.web
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
+from gramps.plugins.database.dictionarydb import DictionaryDb
 
 class ActionHandler(BaseHandler):
     @tornado.web.authenticated
@@ -20,6 +41,10 @@ class ActionHandler(BaseHandler):
             handle, action= path.split("/", 1)
         else:
             handle, action = path, "view"
+        # We don't need connections to other things
+        # and will in fact add a new Table:
+        database = DictionaryDb()
+        database.load(None)
         if handle:
             table = Table()
             action = table.get_item_by_handle(handle)
@@ -27,7 +52,7 @@ class ActionHandler(BaseHandler):
                         **self.get_template_dict(tview=_("action detail"),
                                                  page=page,
                                                  search=search,
-                                                 form=ActionForm(self.database, _, instance=action),
+                                                 form=ActionForm(database, _, instance=action),
                                              )
                     )
         else:
@@ -35,11 +60,17 @@ class ActionHandler(BaseHandler):
                         **self.get_template_dict(tview=_("action view"),
                                                  page=page,
                                                  search=search,
-                                                 form=ActionForm(self.database, _, table="Action"),
+                                                 form=ActionForm(database, _, table="Action"),
                                              )
                     )
 
     @tornado.web.authenticated
     def post(self, handle):
-        # Run report here
-        self.redirect("/action")
+        # Use dict db for place to put Action Table:
+        database = DictionaryDb()
+        database.load(None)
+        table = Table()
+        action = table.get_item_by_handle(handle)
+        form = ActionForm(database, _, instance=action)
+        # Run report on actual database:
+        form.run_action(self.database, action, self)

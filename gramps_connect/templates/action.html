@@ -13,8 +13,8 @@
 <table>
 {% for (key,value) in sorted(form.get_fields(form.instance.handle).items()) %}
    <tr>
-        <td align="right">{{key}}: </td>
-        <td width="80%"><input type="text" size="70" value="{{form.get_field_value(form.instance.handle, key)}}"></input></td>
+        <td align="right"><b>{{key}}</b>: </td>
+        <td width="80%"><input type="text" size="70" name="{{key}}" value="{{form.get_field_value(form.instance.handle, key)}}"></input></td>
    </tr>
    <tr>
 	<td>          </td>

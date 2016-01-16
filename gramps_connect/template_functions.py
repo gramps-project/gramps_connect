@@ -18,10 +18,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
+# Gramps imports:
 from gramps.plugins.lib.libhtml import Html
 from gramps.gen.lib import *
 from gramps.gen.lib.struct import Struct
 
+# Globals and functions:
 TAB_HEIGHT = 200
 
 def make_button(text, link):
