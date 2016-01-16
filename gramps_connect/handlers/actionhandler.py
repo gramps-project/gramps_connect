@@ -52,7 +52,7 @@ class ActionHandler(BaseHandler):
                         **self.get_template_dict(tview=_("action detail"),
                                                  page=page,
                                                  search=search,
-                                                 form=ActionForm(database, _, instance=action),
+                                                 form=ActionForm(self.database, database, _, instance=action),
                                              )
                     )
         else:
@@ -60,7 +60,7 @@ class ActionHandler(BaseHandler):
                         **self.get_template_dict(tview=_("action view"),
                                                  page=page,
                                                  search=search,
-                                                 form=ActionForm(database, _, table="Action"),
+                                                 form=ActionForm(self.database, database, _, table="Action"),
                                              )
                     )
 
@@ -71,6 +71,6 @@ class ActionHandler(BaseHandler):
         database.load(None)
         table = Table()
         action = table.get_item_by_handle(handle)
-        form = ActionForm(database, _, instance=action)
+        form = ActionForm(self.database, database, _, instance=action)
         # Run report on actual database:
-        form.run_action(self.database, action, self)
+        form.run_action(action, self)

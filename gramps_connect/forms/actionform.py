@@ -160,7 +160,8 @@ class ActionForm(Form):
     # Does the interator support a sort_handles flag?
     sort = True
 
-    def __init__(self, database, _, instance=None, table=None):
+    def __init__(self, real_database, database, _, instance=None, table=None):
+        self.real_database = real_database
         database._tables["Action"] = Table().get_function_dict()
         super().__init__(database, _, instance=instance, table=table)
 
@@ -195,7 +196,7 @@ class ActionForm(Form):
         if hasattr(pdata, "optionclass") and pdata.optionclass:
             mod = pmgr.load_plugin(pdata)
             optionclass = getattr(mod, pdata.optionclass)
-            optioninstance = optionclass("Name", self.database)
+            optioninstance = optionclass("Name", self.real_database)
             optioninstance.load_previous_values()
             return optioninstance.options_dict, optioninstance.options_help
         else:
@@ -205,13 +206,13 @@ class ActionForm(Form):
         action = self.database._tables["Action"]["handle_func"](self.instance.handle)
         return action.name
 
-    def run_action(self, database, action, handler):
+    def run_action(self, action, handler):
         options, options_help = self.get_plugin_options(action.handle)
         args = {}
         for key, default_value in options.items():
             args[key] = handler.get_argument(key)
         if action.ptype == "Report":
-            clr = run_report(database, action.handle, of="/tmp/test.html", off="html", **args)
+            clr = run_report(self.real_database, action.handle, of="/tmp/test.html", off="html", **args)
             # can check for results with clr
         elif action.ptype == "Import":
             filename = download(args["i"], "/tmp/%s-%s-%s.%s" % (str(profile.user.username),
