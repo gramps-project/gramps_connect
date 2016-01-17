@@ -20,7 +20,7 @@
 {% include "detail_breadcrumb.html" %}
 
 <div id="summaryarea">
-<table class="infolist" style="width:90%;"> {# 5 cols #}
+<table class="infolist" style="width:100%;"> 
 <tbody>
   {% if messages %}
     <hr>
@@ -35,9 +35,10 @@
   {% end %}
 <form method="post">{% module xsrf_form_html() %}
 <tr>
- <td colspan="4" id="subtitle">{{ form.describe() }}</td>
+ <td colspan="4"></td>
  <td class="ColumnAttribute">{{ form.get_label("primary_name.type") }}:</td>
  <td class="ColumnValue" id="data">{{ form.render("primary_name.type", user, action) }}</td>
+ <td colspan="1" rowspan="11" width="80px" style="border-style: double;">{{form.get_media(80)}}</td>
 </tr>
 <tr><td id="rowspace"></td></tr>
 <tr>
@@ -64,7 +65,7 @@
    link="/person/?search=surname%%3D%(surname)s", 
    surname=form.get("primary_name.surname_list.0.surname")) }}</td>
  <td class="ColumnAttribute">{{ form.get_label("primary_name.surname_list.0.origintype") }}:</td>
- <td class="ColumnValue" id="data" colspan="2">{{ form.render("primary_name.surname_list.0.origintype", user, action) }}</td>
+ <td class="ColumnValue" id="data">{{ form.render("primary_name.surname_list.0.origintype", user, action) }}</td>
 </tr>
 <tr><td id="rowspace"></td></tr>
 <tr>

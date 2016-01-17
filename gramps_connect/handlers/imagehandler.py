@@ -737,8 +737,8 @@ class ImageHandler(BaseHandler):
         self.SUBMIT_URL = "submit"
 
         # URL settings
-        self.BASEURL = self.HOSTNAME + str(self.PORT)
-        self.PREFIX = "/imageservice"
+        self.BASEURL = self.HOSTNAME + ":" + str(self.PORT)
+        self.PREFIX = "/imageserver"
         self.BASEPREF = self.BASEURL + self.PREFIX + '/'
 
         # info.json settings
@@ -1304,12 +1304,14 @@ class ImageHandler(BaseHandler):
         paths = [infoId, c_region, c_size, c_rot, c_qual]
         fn = os.path.join(*paths)
         new_url = self.BASEPREF + fn
-        self.set_header('Link',  
-                        self.request.headers.get("Link", "") + 
-                        ', <{0}>;rel="canonical"'.format(new_url))
+        #self.set_header('Link',  
+        #                self.request.headers.get("Link", "") + 
+        #                ', <{0}>;rel="canonical"'.format(new_url))
         if fn != path:
-            self.set_header('Location', new_url)
-            return self.send("", status=301)
+            #self.set_header('Location', new_url)
+            #return self.send("", status=301)
+            self.redirect("/imageserver/" + fn)
+            return
 
         # Won't regenerate needlessly as earlier cache check would have found it
         # if we're canonical already

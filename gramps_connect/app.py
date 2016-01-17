@@ -142,6 +142,7 @@ class GrampsConnect(Application):
             ),
             url(r'/imageserver/(.*)', ImageHandler,
                 {
+                    "database": self.database,
                     "opts" : self.options,
                     "HOMEDIR": self.options.home_dir,
                     "PORT": self.options.port,
