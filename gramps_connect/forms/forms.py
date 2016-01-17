@@ -120,6 +120,9 @@ class Form(object):
         elif " AND " in search_pair: 
             search_pairs = [s.strip() for s in search_pair.split(" AND ")]
             return ["AND", [self.parse(pair) for pair in search_pairs]]
+        elif " NOT LIKE " in search_pair:
+            field, term = [s.strip() for s in search_pair.split(" NOT LIKE ", 1)]
+            return ["NOT", self.expand_fields(field, "LIKE", term)]
         elif " LIKE " in search_pair:
             field, term = [s.strip() for s in search_pair.split(" LIKE ", 1)]
             return self.expand_fields(field, "LIKE", term)
