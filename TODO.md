@@ -82,3 +82,10 @@ Tabs
 - [ ] Surname
 - [ ] Tag Reference
 
+Issues
+------
+- [ ] Tables are not ordered properly. Apparently, Gramps Gtk will resort 
+      the entire table to get tke order correctly. We should be able to do
+      better, for this and Gramps Gtk. get_XXX_handles(sort_handles=True)
+      should be able to get them in the right order to begin with. Not sure
+      what order this is. Why sort them twice?

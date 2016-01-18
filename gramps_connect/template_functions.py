@@ -22,9 +22,11 @@
 from gramps.plugins.lib.libhtml import Html
 from gramps.gen.lib import *
 from gramps.gen.lib.struct import Struct
+from gramps.gen.display.name import NameDisplay
 
 # Globals and functions:
 TAB_HEIGHT = 200
+nd = NameDisplay().display
 
 def make_button(text, link):
     return """<input type="button" value="%s" onclick="location.href='%s';" />""" % (text, link)
@@ -134,16 +136,16 @@ def event_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-events"
-    table = Table(form, "event_table")
+    table = Table(form, "tab_table")
     event = Event()
     eventref = EventRef()
     table.set_columns(
         ("", 11),
         (event.get_label("description", form._), 19),
         (event.get_label("type", form._), 10),
-        (event.get_label("gramps_id", form._), 7),
+        (event.get_label("gramps_id", form._),11),
         (event.get_label("date", form._), 20),
-        (event.get_label("place", form._), 23),
+        (event.get_label("place", form._), 19),
         (eventref.get_label("role", form._), 10),
     )
     s = Struct.wrap(form.instance, form.database)
@@ -158,71 +160,11 @@ def event_table(form, user, action, link=None, **kwargs):
         has_data = True
         count += 1
     retval += """<div style="background-color: lightgray; padding: 2px 0px 0px 2px"/>"""
-    retval += """<style>#event_table .TableHead {
-	padding: 0.000cm 0.000cm 0.000cm 0.000cm;
-	border-top:thin solid #000000; border-bottom:thin solid #000000;
-	border-left:none; border-right:none;
-}
-#event_table .TableHeaderCell {
-	padding: 0.100cm 0.100cm 0.100cm 0.100cm;
-	border-top:none; border-bottom:thin solid #000000;
-	border-left:none; border-right:thin solid #000000;
-}
-#event_table .TableDataCell {
-	padding: 0.100cm 0.100cm 0.100cm 0.100cm;
-	border-top:none; border-bottom:thin solid #000000;
-	border-left:none; border-right:thin solid #000000;
-}
-#event_table .Header2 {
-	font-size: 10pt;
-	text-align: left; text-indent: 0.00cm;
-	margin-right: 0.00cm; margin-left: 0.00cm;
-	margin-top: 0.00cm; margin-bottom: 0.00cm;
-	border-top:none; border-bottom:none;
-	border-left:none; border-right:none;
-	font-weight:bold;
-}
-#event_table .Header3 {
-	font-size: 10pt;
-	text-align: left; text-indent: 0.00cm;
-	margin-right: 0.00cm; margin-left: 0.00cm;
-	margin-top: 0.00cm; margin-bottom: 0.00cm;
-	border-top:none; border-bottom:none;
-	border-left:none; border-right:none;
-	font-style:italic; font-weight:bold;
-}
-#event_table .Header1 {
-	font-size: 12pt;
-	text-align: left; text-indent: 0.00cm;
-	margin-right: 0.00cm; margin-left: 0.00cm;
-	margin-top: 0.00cm; margin-bottom: 0.00cm;
-	border-top:none; border-bottom:none;
-	border-left:none; border-right:none;
-	font-weight:bold;
-}
-#event_table .Title {
-	font-size: 14pt;
-	text-align: left; text-indent: 0.00cm;
-	margin-right: 0.00cm; margin-left: 0.00cm;
-	margin-top: 0.00cm; margin-bottom: 0.00cm;
-	border-top:none; border-bottom:none;
-	border-left:none; border-right:none;
-	font-weight:bold;
-}
-#event_table .Normal {
-	font-size: 12pt;
-	text-align: left; text-indent: 0.00cm;
-	margin-right: 0.00cm; margin-left: 0.00cm;
-	margin-top: 0.00cm; margin-bottom: 0.00cm;
-	border-top:none; border-bottom:none;
-	border-left:none; border-right:none;
-
-}</style>"""
     if action == "view":
         retval += make_icon_button(form._("Add New Event"), (link % kwargs).replace("$act", "add"), icon="+") # )
         retval += make_icon_button(form._("Add Existing Event"), (link % kwargs).replace("$act", "share"), icon="p") # )
     else:
-        retval += """<div style="height: 26px;"></div>""" # to keep tabs same height
+        retval += """&nbsp;""" # to keep tabs same height
     retval += """</div>"""
     retval += table.get_html()
     #if act == "view":
@@ -243,36 +185,40 @@ def name_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-names"
-    table = Table(form, "name_table")
+    table = Table(form, "tab_table")
     table.set_columns(
-        (form._("Name"), 10),
-        (form._("Type"), 10),
-        (form._("Group As"), 10),
+        ("", 11),
+        (form._("Name"), 29),
+        (form._("Type"), 20),
+        (form._("Group As"), 15),
         (form._("Source"), 10),
-        (form._("Note Preview"), 10),
+        (form._("Note Preview"), 15),
     )
     if user or form.instance.public:
-         links = []
-         for name in form.instance.alternate_names:
-             for citation_ref in name:
-                 note = form.database.get_note_from_handle(note_ref.ref)
-             for note_ref in name:
-                 note = form.database.get_note_from_handle(note_ref.ref)
-    #         if note_refs.count() > 0:
-    #             try:
-    #                 note = db.dji.Note.get(id=note_refs[0].object_id).text[:50]
-    #             except:
-    #                 note = None
-    #         table.row(make_name(name, user),
-    #                   str(name.name_type) + ["", " (preferred)"][int(name.preferred)],
-    #                   name.group_as,
-    #                   ["No", "Yes"][citationq],
-    #                   note)
-    #         links.append(('URL',
-    #                       # url is "/person/%s/name"
-    #                       (url % name.person.handle) + ("/%s" % name.order)))
-    #         has_data = True
-    #     table.links(links)
+        #         links.append(('URL',
+        #                       # url is "/person/%s/name"
+        #                       (url % name.person.handle) + ("/%s" % name.order)))
+        count = 0
+        for name in [form.instance.primary_name] + form.instance.alternate_names:
+            citations = []
+            for citation_ref in name.citation_list:
+                citation = form.database.get_note_from_handle(citation_ref.ref)
+                if citation:
+                    citations.append(citation)
+            citationq = len(citations) > 0
+            note_text = ""
+            for note_ref in name.note_list:
+                note = form.database.get_note_from_handle(note_ref.ref)
+                if note:
+                    note_text = note.text.string[:50]
+                    break
+            table.append_row(render_name(name),
+                             str(name.type) + ["", " (preferred)"][int(count == 0)],
+                             name.group_as,
+                             ["No", "Yes"][citationq],
+                             note_text)
+            has_data = True
+            count += 1
     retval += """<div style="background-color: lightgray; padding: 2px 0px 0px 2px">"""
     if user and link and action == "view":
         retval += make_icon_button(form._("Add Name"), (link % kwargs), icon="+")
@@ -290,7 +236,7 @@ def surname_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-surnames"
-    table = Table(form, "surname_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Order"),  10),
         (form._("Surname"), 10),
@@ -323,7 +269,7 @@ def citation_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-sources"
-    table = Table(form, "citation_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         ("", 11),
         (form._("ID"), 10),
@@ -375,7 +321,7 @@ def repository_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-repositories"
-    table = Table(form, "repository_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("ID"), 11),
         (form._("Title"), 49),
@@ -424,7 +370,7 @@ def note_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-notes"
-    table = Table(form, "note_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         ("", 11),
         (form._("ID"), 10),
@@ -475,7 +421,7 @@ def data_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-data"
-    table = Table(form, "data_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         ("", 11),
         (form._("Type"), 39),
@@ -525,7 +471,7 @@ def attribute_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-attributes"
-    table = Table(form, "attribute_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Value"), 10),
@@ -553,7 +499,7 @@ def address_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-addresses"
-    table = Table(form, "address_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Date"), 10),
         (form._("Address"), 10),
@@ -586,7 +532,7 @@ def media_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-media"
-    table = Table(form, "media_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Description"), 10),
         (form._("Type"), 10),
@@ -619,7 +565,7 @@ def internet_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-internet"
-    table = Table(form, "internet_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Path"), 10),
@@ -647,7 +593,7 @@ def association_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-associations"
-    table = Table(form, "association_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Name"), 10),
         (form._("ID"), 10),
@@ -691,7 +637,7 @@ def location_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-alternatelocations"
-    table = Table(form, "location_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Street"), 10),
         (form._("Locality"), 10),
@@ -727,7 +673,7 @@ def lds_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-lds"
-    table = Table(form, "lds_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Date"), 10),
@@ -762,13 +708,13 @@ def person_reference_table(form, user, action, link=None, **kwargs):
     cssid = "tab-references"
     text1 = ""
     text2 = ""
-    table1 = Table(form, "person_reference_table", style="background-color: #f4f0ec;")
+    table1 = Table(form, "tab_table", style="background-color: #f4f0ec;")
     table1.set_columns(
         ("As Spouse", 11),
         (form._("ID"), 10),
         (form._("Reference"), 79),
     )
-    table2 = Table(form, "person_reference_table", style="background-color: #f4f0ec;")
+    table2 = Table(form, "tab_table", style="background-color: #f4f0ec;")
     table2.set_columns(
         ("As Child", 11),
         (form._("ID"), 10),
@@ -831,7 +777,8 @@ def person_reference_table(form, user, action, link=None, **kwargs):
     # retval += make_image_button2("add child to existing family",
     #                              form._("Add as Child to Existing Family"),
     #                              "/family/share/child/%s" % obj.handle)
-    # retval += """</div>"""
+    retval += "&nbsp;"
+    retval += """</div>"""
     retval += """<div style="overflow: auto; height:%spx;">""" % TAB_HEIGHT
     retval += text1 + text2 + "</div>"
     if has_data:
@@ -842,7 +789,7 @@ def note_reference_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-references"
-    table = Table(form, "note_reference_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Reference"), 10),
@@ -867,7 +814,7 @@ def event_reference_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-references"
-    table = Table(form, "event_reference_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Reference"), 10),
@@ -896,7 +843,7 @@ def repository_reference_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-references"
-    table = Table(form, "repository_reference_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Reference"), 10),
@@ -921,7 +868,7 @@ def citation_reference_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-references"
-    table = Table(form, "citation_reference_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Reference"), 10),
@@ -945,7 +892,7 @@ def source_reference_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-references"
-    table = Table(form, "source_reference_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Reference"), 10),
@@ -968,7 +915,7 @@ def media_reference_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-references"
-    table = Table(form, "media_reference_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Reference"), 10),
@@ -993,7 +940,7 @@ def place_reference_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-references"
-    table = Table(form, "place_reference_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Reference"), 10),
@@ -1017,7 +964,7 @@ def tag_reference_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-references"
-    table = Table(form, "tag_reference_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         (form._("Type"), 10),
         (form._("Reference"), 10),
@@ -1042,7 +989,7 @@ def children_table(form, user, action, link=None, **kwargs):
     retval = ""
     has_data = False
     cssid = "tab-children"
-    table = Table(form, "children_table")
+    table = Table(form, "tab_table")
     table.set_columns(
         ("", 11),
         (form._("#"), 5),
@@ -1092,8 +1039,11 @@ def children_table(form, user, action, link=None, **kwargs):
     #         has_data = True
     #         count += 1
     # table.links(links)
-    text = table.get_html()
     retval += """<div style="background-color: lightgray; padding: 2px 0px 0px 2px">"""
+    retval += "&nbsp;"
+    retval += "</div>"
+    text = table.get_html()
+
     # if user.is_superuser and url and act == "view":
     #     text = text.replace("{{", """<div style="background-color: lightgray; padding: 2px 0px 0px 2px">""")
     #     text = text.replace("}}", """</div>""")
@@ -1112,3 +1062,27 @@ def children_table(form, user, action, link=None, **kwargs):
     if has_data:
         retval += """ <SCRIPT LANGUAGE="JavaScript">setHasData("%s", 1)</SCRIPT>\n""" % cssid
     return retval
+
+def render_name(name):
+    """
+    Given a Gramps object, render the name and return.  This
+    function uses authentication, privacy and probably_alive settings.
+    """
+    if name is None:
+        return "[None]"
+    elif isinstance(name, Person): # name is a Person
+        try:
+            name = person.get_primary_name()
+        except:
+            name = None
+    elif isinstance(name, Name): # name is a Person
+        pass # it is a name
+    else: # no name object
+        return "[No preferred name]"
+    if name is None:
+        return "[No preferred name]"
+    if len(name.surname_list) > 0:
+        surname = name.surname_list[0].surname
+    else:
+        surname = "[No primary surname]"
+    return "%s, %s" % (surname, name.first_name)
