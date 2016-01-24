@@ -73,6 +73,8 @@ class PersonForm(Form):
         "death": "death",
     }
 
+    order_by = [("surname", "ASC"), ("given", "ASC")]
+
     # Fields for page view; width sum = 95%:
     select_fields = [
         ("primary_name.surname_list.0.surname", 25),

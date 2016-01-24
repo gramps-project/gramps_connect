@@ -44,6 +44,9 @@ class FamilyForm(Form):
         ("type.string", 25),
     ]
 
+    # Default order_by:
+    order_by = [("father_surname", "ASC"), ("father_given", "ASC")]
+
     # Search fields, list is OR:
     search_terms = {
         "father": ["father_surname", "father_given"], 

@@ -51,12 +51,12 @@ class Form(object):
     edit_fields = []
     select_fields = []
     env_fields = []
+    order_by = []
     post_process_functions = {}
     search_terms = {}
     link = None
     filter = None
     page_size = 25
-    sort = False
     count_width = 5
 
     def __init__(self, database, _, instance=None, table=None):
@@ -190,7 +190,8 @@ class Form(object):
         self.log.info("filter: " + str(self.filter))
         self.rows = self.database.select(self.table,
                                          self.get_select_fields() + self.env_fields,
-                                         self.sort, self.page * self.page_size,
+                                         self.page * self.page_size,
+                                         order_by=self.order_by,
                                          limit=self.page_size,
                                          filter=self.filter)
         return ""

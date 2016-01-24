@@ -35,11 +35,10 @@ class JsonHandler(BaseHandler):
         size = int(self.get_argument("s", "10"))
         if field in ["mother", "father"]:
             table = "Person"
-            fields = ["primary_name.first_name", 
-                      "primary_name.surname_list.0.surname", 
-                      "gender", 
+            fields = ["primary_name.first_name",
+                      "primary_name.surname_list.0.surname",
+                      "gender",
                       "handle"]
-            sort = True
             if "," in query:
                 surname, given = [s.strip() for s in query.split(",", 1)]
                 filter = ["OR", [("primary_name.surname_list.0.surname", "LIKE", "%s%%" % surname),
@@ -77,15 +76,15 @@ class JsonHandler(BaseHandler):
             raise Exception("""Invalid field: '%s'; Example: /json/?field=mother&q=Smith&p=1&size=10""" % field)
         ## ------------
         self.log.info("json filter: " + str(filter))
-        rows = self.database.select(table, fields, sort, (page - 1) * size, 
+        rows = self.database.select(table, fields, (page - 1) * size,
                                     size, filter=filter)
         response_data = {"results": [], "total": rows.total}
         for row in rows:
-            obj = self.database.get_from_name_and_handle(table, 
+            obj = self.database.get_from_name_and_handle(table,
                                                          row["handle"])
             if obj:
                 name = return_delim.join([obj.get_field(f) for f in return_fields])
-                response_data["results"].append({"id": obj.handle, 
+                response_data["results"].append({"id": obj.handle,
                                                  "name": name})
         self.set_header('Content-Type', 'application/json')
         self.write(simplejson.dumps(response_data))
