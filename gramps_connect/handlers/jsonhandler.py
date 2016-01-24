@@ -63,21 +63,15 @@ class JsonHandler(BaseHandler):
                              'primary_name.first_name']
             return_delim = ", "
         elif field == "person":
-            q, order, terms = build_person_query(request, query)
-            matches = Name.objects.filter(q).order_by(*order)
-            class_type = gramps.gen.lib.Person
-            handle_expr = "match.person.handle"
+            pass
         elif field == "place":
-            q, order, terms = build_place_query(request, query)
-            matches = Place.objects.filter(q).order_by(*order)
-            class_type = gramps.gen.lib.Place
-            handle_expr = "match.handle"
+            pass
         else:
             raise Exception("""Invalid field: '%s'; Example: /json/?field=mother&q=Smith&p=1&size=10""" % field)
         ## ------------
         self.log.info("json filter: " + str(filter))
-        rows = self.database.select(table, fields, (page - 1) * size,
-                                    size, filter=filter)
+        rows = self.database.select(table, fields, start=(page - 1) * size,
+                                    limit=size, filter=filter)
         response_data = {"results": [], "total": rows.total}
         for row in rows:
             obj = self.database.get_from_name_and_handle(table,
