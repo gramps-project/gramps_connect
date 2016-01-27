@@ -39,26 +39,28 @@ class JsonHandler(BaseHandler):
                       "primary_name.surname_list.0.surname",
                       "gender",
                       "handle"]
+            order_by = [('primary_name.surname_list.0.surname', "ASC"),
+                        ('primary_name.first_name', "ASC")]
             if "," in query:
                 surname, given = [s.strip() for s in query.split(",", 1)]
-                filter = ["OR", [("primary_name.surname_list.0.surname", "LIKE", "%s%%" % surname),
+                where = ["AND", [("primary_name.surname_list.0.surname", "LIKE", "%s%%" % surname),
                                  ("primary_name.first_name", "LIKE", "%s%%" % given),
                              ]]
             elif query:
-                filter = ("primary_name.surname_list.0.surname", "LIKE", "%s%%" % query)
+                where = ("primary_name.surname_list.0.surname", "LIKE", "%s%%" % query)
             else:
-                filter = None
+                where = None
             # UNKNOWN = 2, MALE = 1, FEMALE = 0
             if field == "mother":
-                if filter:
-                    filter = ["AND", [filter, ("gender", "IN", [0, 2])]]
+                if where:
+                    where = ["AND", [where, ("gender", "IN", [0, 2])]]
                 else:
-                    filter = ("gender", "=", 0)
+                    where = ("gender", "=", 0)
             elif field == "father":
-                if filter:
-                    filter = ["AND", [filter, ("gender", "IN", [1, 2])]]
+                if where:
+                    where = ["AND", [where, ("gender", "IN", [1, 2])]]
                 else:
-                    filter = ("gender", "=", 1)
+                    where = ("gender", "=", 1)
             return_fields = ['primary_name.surname_list.0.surname',
                              'primary_name.first_name']
             return_delim = ", "
@@ -69,9 +71,11 @@ class JsonHandler(BaseHandler):
         else:
             raise Exception("""Invalid field: '%s'; Example: /json/?field=mother&q=Smith&p=1&size=10""" % field)
         ## ------------
-        self.log.info("json filter: " + str(filter))
+        self.log.info("json where: " + str(where))
         rows = self.database.select(table, fields, start=(page - 1) * size,
-                                    limit=size, filter=filter)
+                                    limit=size, 
+                                    where=where, 
+                                    order_by=order_by)
         response_data = {"results": [], "total": rows.total}
         for row in rows:
             obj = self.database.get_from_name_and_handle(table,

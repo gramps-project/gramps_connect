@@ -55,7 +55,7 @@ class Form(object):
     post_process_functions = {}
     search_terms = {}
     link = None
-    filter = None
+    where = None
     page_size = 25
     count_width = 5
 
@@ -66,7 +66,7 @@ class Form(object):
         if self._class:
             self.schema = self._class.get_schema()
         self.table = table
-        self.filter = None
+        self.where = None
         self.database = database
         self.instance = instance
         self._ = _
@@ -133,11 +133,11 @@ class Form(object):
             field, term = [s.strip() for s in search_pair.split("=", 1)]
             return self.expand_fields(field, "=", term)
         else: # search all defaults, OR
-            or_filter = []
+            or_where = []
             for field in self.default_search_fields:
                 term = search_pair.strip()
-                or_filter.append(self.expand_fields(field, "LIKE", term))
-            return ["OR", or_filter]
+                or_where.append(self.expand_fields(field, "LIKE", term))
+            return ["OR", or_where]
 
     def expand_fields(self, field, op, term):
         """
@@ -148,11 +148,11 @@ class Form(object):
         term = self.fix_term(term)
         # replace term for common values
         if isinstance(field, (list, tuple)):
-            or_filter = []
+            or_where = []
             for field in field:
                 field = self.database._tables[self.table]["class_func"].get_field_alias(field)
-                or_filter.append((field, op, term))
-            return ["OR", or_filter]
+                or_where.append((field, op, term))
+            return ["OR", or_where]
         else:
             field = self.database._tables[self.table]["class_func"].get_field_alias(field)
             return (field, op, term)
@@ -176,24 +176,24 @@ class Form(object):
     def select(self, page=1, search=None):
         self.page = page - 1
         self.search = search
-        self.filter = None
+        self.where = None
         if search:
             searches = search.split(",") # top-level ANDs
-            filter = []
-            # get all filter terms:
+            where = []
+            # get all where terms:
             for search_pair in searches:
-                filter.append(self.parse(search_pair))
-            if len(filter) == 1:
-                self.filter = filter[0]
-            elif len(filter) > 1:
-                self.filter = ["AND", filter]
-        self.log.info("filter: " + str(self.filter))
+                where.append(self.parse(search_pair))
+            if len(where) == 1:
+                self.where = where[0]
+            elif len(where) > 1:
+                self.where = ["AND", where]
+        self.log.info("where: " + str(self.where))
         self.rows = self.database.select(self.table,
                                          self.get_select_fields() + self.env_fields,
                                          self.page * self.page_size,
                                          order_by=self.order_by,
                                          limit=self.page_size,
-                                         filter=self.filter)
+                                         where=self.where)
         return ""
 
     def get_select_fields(self):

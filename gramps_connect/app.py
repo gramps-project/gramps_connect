@@ -191,7 +191,7 @@ class GrampsConnect(Application):
         """
         Given an image handle, return the full path/filename.
         """
-        media = self.database.get_object_from_handle(identifier)
+        media = self.database.get_media_from_handle(identifier)
         if media:
             return media_path_full(self.database, media.get_path())
         return ""

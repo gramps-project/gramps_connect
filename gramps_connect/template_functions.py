@@ -543,9 +543,9 @@ def media_table(form, user, action, link=None, **kwargs):
     #     media_refs = db.dji.MediaRef.filter(object_type=obj_type,
     #                                     object_id=obj.id)
     #     for media_ref in media_refs:
-    #         media = table.db.get_object_from_handle(
+    #         media = table.db.get_media_from_handle(
     #             media_ref.ref_object.handle)
-    #         table.append_row(table.db.get_object_from_handle(media.handle),
+    #         table.append_row(table.db.get_media_from_handle(media.handle),
     #                   str(media_ref.ref_object.desc),
     #                   media_ref.ref_object.path)
     #         has_data = True
