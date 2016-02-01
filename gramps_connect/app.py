@@ -126,6 +126,20 @@ class GrampsConnect(Application):
                     "opts" : self.options,
                 },
             ),
+            url(r'/note/(.*)', NoteHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+                name="note"),
+            url(r'/note', NoteHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+            ),
             url(r'/family/(.*)', FamilyHandler,
                 {
                     "database": self.database,

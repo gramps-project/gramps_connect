@@ -80,7 +80,12 @@ class Table(object):
             "commit_func": self.commit,
             "handle_func": self.get_item_by_handle,
             "handles_func": self.get_items,
+            "iter_func": self.iter_items,
         }
+
+    def iter_items(self, order_by):
+        for item in self._cache:
+            yield self.get_item_by_handle(item[2])
 
     def get_class(self):
         return self._class
@@ -220,9 +225,9 @@ class ActionForm(Form):
                                                                  timestamp(),
                                                                  args["iff"]))
             if filename is not None:
-                import_file(db, filename, gramps.cli.user.User()) # callback
+                import_file(self.real_database, filename, gramps.cli.user.User()) # callback
         elif action.ptype == "Export":
-            export_file(db, filename, gramps.cli.user.User()) # callback
+            export_file(self.real_database, filename, gramps.cli.user.User()) # callback
         handler.redirect("/action")
 
 ## Copied from django-webapp; need to integrate:

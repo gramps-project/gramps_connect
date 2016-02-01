@@ -18,48 +18,50 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-from gramps.gen.lib.family import Family
+# Gramps imports:
+from gramps.gen.lib.note import Note
 
+# Gramps Connect imports:
 from .forms import Form
 
-class FamilyForm(Form):
+class NoteForm(Form):
     """
+    A form for listing, viewing, and editing a Person object.
     """
-    _class = Family
-    view = "family"
-    tview = "Family"
+    _class = Note
+    view = "note"
+    tview = "Note"
 
     # Fields for editor:
     edit_fields = [
+        "type",
+        "text.string",
+        "gramps_id",
+        "tag_list",
+        "private",
     ]
 
     # URL for page view rows:
-    link = "/family/%(handle)s"
+    link = "/note/%(handle)s"
+
+    # Search fields to use if not specified:
+    default_search_fields = [
+        "text.string",
+        "gramps_id",
+    ]
+
+    # Search fields, list is OR
+    search_terms = {
+        "text": "text.string",
+        "id": "gramps_id",
+    }
+
+    order_by = [("gramps_id", "ASC")]
 
     # Fields for page view; width sum = 95%:
     select_fields = [
         ("gramps_id", 10),
-        ("father_handle", 30),
-        ("mother_handle", 30),
-        ("type.string", 25),
-    ]
-
-    # Default order_by:
-    order_by = [("father_surname", "ASC"), ("father_given", "ASC")]
-
-    # Search fields, list is OR:
-    search_terms = {
-        "father": ["father_surname", "father_given"], 
-        "mother": ["mother_surname", "mother_given"], 
-        "id": "gramps_id",
-    }
-
-    # Search fields to use if not specified:
-    default_search_fields = [
-        "father_handle.primary_name.surname_list.0.surname",
-        "father_handle.primary_name.first_name",
-        "mother_handle.primary_name.surname_list.0.surname",
-        "mother_handle.primary_name.first_name",
+        ("text.string", 85),
     ]
 
     # Other fields needed to select:
@@ -68,12 +70,19 @@ class FamilyForm(Form):
     ]
 
     def set_post_process_functions(self):
+        """
+        Set the post_process_functions dictionary.
+        """
         self.post_process_functions = {
-            "father_handle": self.get_person_from_handle,
-            "mother_handle": self.get_person_from_handle,
-            #"tag_list": self.get_tag_from_handle:name
+            "text.string": self.preview,
         }
 
+    def preview(self, text, env):
+        return text[:100]
+
     def describe(self):
-        return str(self.instance)
+        """
+        Textual description of this instance.
+        """
+        return str(self.instance.gramps_id)
 

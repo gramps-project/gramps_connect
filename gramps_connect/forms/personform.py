@@ -91,9 +91,6 @@ class PersonForm(Form):
         "event_ref_list",
     ]
 
-    # Does the interator support a sort_handles flag?
-    sort = True
-
     def set_post_process_functions(self):
         """
         Set the post_process_functions dictionary.

@@ -136,7 +136,8 @@ class Form(object):
             or_where = []
             for field in self.default_search_fields:
                 term = search_pair.strip()
-                or_where.append(self.expand_fields(field, "LIKE", term))
+                or_where.append(self.expand_fields(field, "LIKE", 
+                                                   "%" + term + "%"))
             return ["OR", or_where]
 
     def expand_fields(self, field, op, term):

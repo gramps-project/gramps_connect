@@ -21,3 +21,4 @@
 from .personform import PersonForm
 from .familyform import FamilyForm
 from .actionform import ActionForm
+from .noteform import NoteForm
