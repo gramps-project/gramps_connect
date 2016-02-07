@@ -20,12 +20,15 @@
 
 # Python imports:
 import time
+import os
 
 # Gramps Connect imports:
 from .forms import Form, Column, Row
 
 # Gramps imports:
 from gramps.cli.plug import BasePluginManager, run_report
+from gramps.plugins.database.dictionarydb import DictionaryDb
+from gramps.cli.user import User
 
 # Classes:
 class Action(object):
@@ -83,7 +86,7 @@ class Table(object):
             "iter_func": self.iter_items,
         }
 
-    def iter_items(self, order_by):
+    def iter_items(self, order_by=None):
         for item in self._cache:
             yield self.get_item_by_handle(item[2])
 
@@ -165,9 +168,11 @@ class ActionForm(Form):
     # Does the interator support a sort_handles flag?
     sort = True
 
-    def __init__(self, real_database, database, _, instance=None, table=None):
-        self.real_database = real_database
-        database._tables["Action"] = Table().get_function_dict()
+    def __init__(self, gramps_database, _, instance=None, table=None):
+        self.gramps_database = gramps_database
+        database = DictionaryDb()
+        database.load(None)
+        database.add_table_funcs("Action", Table().get_function_dict())
         super().__init__(database, _, instance=instance, table=table)
 
     def set_post_process_functions(self):
@@ -182,7 +187,7 @@ class ActionForm(Form):
         ])
 
     def get_table_count(self):
-        return self.database._tables[self.table]["count_func"]()
+        return self.database.get_table_func(self.table,"count_func")()
 
     def get_field_value(self, pid, key):
         options_dict, options_help = self.get_plugin_options(pid)
@@ -201,14 +206,14 @@ class ActionForm(Form):
         if hasattr(pdata, "optionclass") and pdata.optionclass:
             mod = pmgr.load_plugin(pdata)
             optionclass = getattr(mod, pdata.optionclass)
-            optioninstance = optionclass("Name", self.real_database)
+            optioninstance = optionclass("Name", self.gramps_database)
             optioninstance.load_previous_values()
             return optioninstance.options_dict, optioninstance.options_help
         else:
             return {}, {}
 
     def describe(self):
-        action = self.database._tables["Action"]["handle_func"](self.instance.handle)
+        action = self.database.get_table_func("Action", "handle_func")(self.instance.handle)
         return action.name
 
     def run_action(self, action, handler):
@@ -217,7 +222,7 @@ class ActionForm(Form):
         for key, default_value in options.items():
             args[key] = handler.get_argument(key)
         if action.ptype == "Report":
-            clr = run_report(self.real_database, action.handle, of="/tmp/test.html", off="html", **args)
+            clr = run_report(self.gramps_database, action.handle, of="/tmp/test.html", off="html", **args)
             # can check for results with clr
         elif action.ptype == "Import":
             filename = download(args["i"], "/tmp/%s-%s-%s.%s" % (str(profile.user.username),
@@ -225,9 +230,11 @@ class ActionForm(Form):
                                                                  timestamp(),
                                                                  args["iff"]))
             if filename is not None:
-                import_file(self.real_database, filename, gramps.cli.user.User()) # callback
+                import_file(self.gramps_database, filename, User()) # callback
         elif action.ptype == "Export":
-            export_file(self.real_database, filename, gramps.cli.user.User()) # callback
+            pmgr = BasePluginManager.get_instance()
+            pdata = pmgr.get_plugin(action.handle)
+            export_file(self.gramps_database, "export." + pdata.extension, User()) # callback
         handler.redirect("/action")
 
 ## Copied from django-webapp; need to integrate:
@@ -238,7 +245,8 @@ def import_file(db, filename, user):
 
     >>> import_file(DbDjango(), "/home/user/Untitled_1.ged", User())
     """
-    from .grampsdb.models import Person
+    from gramps.gen.dbstate import DbState
+    from gramps.cli.grampscli import CLIManager
     dbstate = DbState()
     climanager = CLIManager(dbstate, setloader=False, user=user) # do not load db_loader
     climanager.do_reg_plugins(dbstate, None)
@@ -292,6 +300,8 @@ def export_file(db, filename, user):
 
     >>> export_file(DbDjango(), "/home/user/Untitled_1.ged", User())
     """
+    from gramps.gen.dbstate import DbState
+    from gramps.cli.grampscli import CLIManager
     dbstate = DbState()
     climanager = CLIManager(dbstate, setloader=False, user=user) # do not load db_loader
     climanager.do_reg_plugins(dbstate, None)

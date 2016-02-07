@@ -215,6 +215,9 @@ if __name__ == "__main__":
     tornado.log.logging.info("Gramps Connect starting...")
     if options.debug:
         import tornado.autoreload
+        import logging
+        log = logging.getLogger()
+        log.setLevel(logging.DEBUG)
         tornado.log.logging.info("Debug mode...")
         directory = os.path.realpath(".")
         template_directory = os.path.join(directory, 'gramps_connect', 'templates')

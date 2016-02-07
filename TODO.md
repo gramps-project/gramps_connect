@@ -1,7 +1,7 @@
 Gramps Connect
 ==============
 
-Current Status 
+Current Status
 
 General
 -------
@@ -13,7 +13,7 @@ General
   - [x] List, search, view
   - [ ] Where do they go? How to notify? In background?
   - [x] Reports
-  - [ ] Exports
+  - [x] Exports
   - [ ] Imports
 - [ ] User settings (password, theme, database, superuser, rw, access to tree, preferred output format (html, pdf, svg))
 - [x] Search
@@ -21,7 +21,7 @@ General
 Forms - add, edit, view list
 -----------------
 - [x] Person (except bools and lists)
-- [ ] Family 
+- [ ] Family
   - [x] List
   - [ ] View and Edit
 - [ ] Citation/Source (form should be shared)
@@ -42,7 +42,7 @@ Forms - add, edit, view list
 - [ ] Repository
   - [ ] List
   - [ ] View and Edit
-- [ ] Note
+- [x] Note
   - [ ] List
   - [ ] View and Edit
 - [ ] Tag
@@ -84,8 +84,7 @@ Tabs
 
 Issues
 ------
-- [ ] Tables are not ordered properly. Apparently, Gramps Gtk will resort 
-      the entire table to get tke order correctly. We should be able to do
-      better, for this and Gramps Gtk. get_XXX_handles(sort_handles=True)
-      should be able to get them in the right order to begin with. Not sure
-      what order this is. Why sort them twice?
+- [x] Tables sort order. Apparently, Gramps Gtk will resort the entire
+      table to get tke order correctly. We should be able to do better,
+      for this and Gramps Gtk. get_XXX_handles(sort_handles=True)
+      This order is a rough surname-ordered, only used for picklists.

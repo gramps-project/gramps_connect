@@ -71,18 +71,21 @@ class JsonHandler(BaseHandler):
         else:
             raise Exception("""Invalid field: '%s'; Example: /json/?field=mother&q=Smith&p=1&size=10""" % field)
         ## ------------
-        self.log.info("json where: " + str(where))
-        rows = self.database.select(table, fields, start=(page - 1) * size,
-                                    limit=size, 
-                                    where=where, 
-                                    order_by=order_by)
+        self.log.debug("received json query: " + str(where))
+        queryset = self.database.get_queryset_by_table_name(table)
+        queryset.limit(start=(page - 1) * size, count=size)
+        queryset.where_by = where
+        queryset.order_by = order_by
+        class Result(list):
+            total = 0
+        rows = Result(queryset.select("handle", *return_fields))
+        queryset = self.database.get_queryset_by_table_name(table)
+        queryset.where_by = where
+        rows.total = queryset.count()
         response_data = {"results": [], "total": rows.total}
         for row in rows:
-            obj = self.database.get_from_name_and_handle(table,
-                                                         row["handle"])
-            if obj:
-                name = return_delim.join([obj.get_field(f) for f in return_fields])
-                response_data["results"].append({"id": obj.handle,
-                                                 "name": name})
+            name = return_delim.join([row[f] for f in return_fields])
+            response_data["results"].append({"id": row["handle"],
+                                             "name": name})
         self.set_header('Content-Type', 'application/json')
         self.write(simplejson.dumps(response_data))

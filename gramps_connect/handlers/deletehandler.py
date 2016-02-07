@@ -28,7 +28,7 @@ from ..forms import PersonForm
 class DeleteHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, table, handle):
-        handle_func = self.database._tables[table.title()]["handle_func"]
+        handle_func = self.database.get_table_func(table.title(),"handle_func")
         instance = handle_func(handle)
         form_class = self.get_form(table)
         form = form_class(self.database, self._, instance=instance)
@@ -40,7 +40,7 @@ class DeleteHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self, table, handle):
         transaction = self.database.get_transaction_class()
-        del_func = self.database._tables[table.title()]["del_func"]
+        del_func = self.database.get_table(table.title(),"del_func")
         with transaction("Gramps Connect", self.database) as trans:
             del_func(handle, trans)
         self.redirect("/" + table)

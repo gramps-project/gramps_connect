@@ -20,6 +20,7 @@
 
 import logging
 import math
+import time
 
 from ..template_functions import make_button
 
@@ -62,7 +63,7 @@ class Form(object):
     def __init__(self, database, _, instance=None, table=None):
         # scheme is a map from FIELD to Python Type, list[Gramps objects], or Handle
         if table:
-            self._class = database._tables[table]["class_func"]
+            self._class = database.get_table_func(table,"class_func")
         if self._class:
             self.schema = self._class.get_schema()
         self.table = table
@@ -92,7 +93,7 @@ class Form(object):
         return query
 
     def get_table_count(self):
-        return self.database._tables[self.table]["count_func"]()
+        return self.database.get_table_func(self.table,"count_func")()
 
     def get_page_controls(self, page):
         total = self.get_table_count()
@@ -151,11 +152,11 @@ class Form(object):
         if isinstance(field, (list, tuple)):
             or_where = []
             for field in field:
-                field = self.database._tables[self.table]["class_func"].get_field_alias(field)
+                field = self.database.get_table_func(self.table,"class_func").get_field_alias(field)
                 or_where.append((field, op, term))
             return ["OR", or_where]
         else:
-            field = self.database._tables[self.table]["class_func"].get_field_alias(field)
+            field = self.database.get_table_func(self.table,"class_func").get_field_alias(field)
             return (field, op, term)
 
     def fix_term(self, term):
@@ -188,13 +189,20 @@ class Form(object):
                 self.where = where[0]
             elif len(where) > 1:
                 self.where = ["AND", where]
-        self.log.info("where: " + str(self.where))
-        self.rows = self.database.select(self.table,
-                                         self.get_select_fields() + self.env_fields,
-                                         self.page * self.page_size,
-                                         order_by=self.order_by,
-                                         limit=self.page_size,
-                                         where=self.where)
+        self.log.debug("where: " + str(self.where))
+        queryset = self.database.get_queryset_by_table_name(self.table)
+        queryset.limit(start=self.page * self.page_size, count=self.page_size)
+        queryset.order_by = self.order_by
+        queryset.where_by = self.where
+        class Result(list):
+            time = 0
+            total = 0
+        start_time = time.time()
+        self.rows = Result(queryset.select(*(self.get_select_fields() + self.env_fields)))
+        queryset = self.database.get_queryset_by_table_name(self.table)
+        queryset.where_by = self.where
+        self.rows.total = queryset.count()
+        self.rows.time = time.time() - start_time
         return ""
 
     def get_select_fields(self):
@@ -210,7 +218,7 @@ class Form(object):
         return [width for (field, width) in self.select_fields][position]
 
     def get_rows(self, page=0):
-        self.log.info("page=" + str(page))
+        self.log.debug("getting page = " + str(page))
         retval = []
         count = (self.page * self.page_size) + 1
         url = """<a href="%s?page=%s" class="browsecell">%s</a>"""
@@ -293,7 +301,7 @@ class Form(object):
                 continue
             self.instance.set_field(field, value)
         transaction = self.database.get_transaction_class()
-        commit = self.database._tables[self._class.__name__]["commit_func"]
+        commit = self.database.get_table_func(self._class.__name__,"commit_func")
         with transaction("Gramps Connect", self.database) as trans:
             commit(self.instance, trans)
 
