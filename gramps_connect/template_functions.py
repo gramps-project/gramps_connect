@@ -1057,7 +1057,6 @@ def children_table(form, user, action, link=None, **kwargs):
     #     retval += make_button(_("Add Existing Person as Child"), (url.replace("$act", "share") % args))
     # else:
     #     retval += nbsp("") # to keep tabs same height
-    retval += """</div>"""
     retval += text
     if has_data:
         retval += """ <SCRIPT LANGUAGE="JavaScript">setHasData("%s", 1)</SCRIPT>\n""" % cssid

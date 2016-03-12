@@ -56,7 +56,7 @@
   	        initialId: '{{ form.get("father_handle") }}'
 	        });
         });  
-    // </script>
+    </script>
     <div id="father"></div>  
 {% else %}
  {{ form.render("father_handle", user, action) }}
@@ -83,7 +83,7 @@
   	        initialId: '{{ form.get("mother_handle") }}'
 	        });
         });  
-    // </script>
+    </script>
     <div id="mother"></div>  
 {% else %}
  {{ form.render("mother_handle", user, action) }}
@@ -180,7 +180,7 @@
     <li class="ui-corner-top ui-state-default"><a class="tab-lds" href="#tab-lds">LDS</a></li>
   </ul>
   <div class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="tab-children" style="background-color: #f4f0ec;"> 
-    <!-- Events -->
+    <!-- Children -->
     {{ children_table(form, user, action, "/person/$act/family/%(handle)s", handle=form.instance.handle) }}
   </div>
   <div class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide" id="tab-events" style="background-color: #f4f0ec;"> 
