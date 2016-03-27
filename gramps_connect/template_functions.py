@@ -202,7 +202,7 @@ def name_table(form, user, action, link=None, **kwargs):
         for name in [form.instance.primary_name] + form.instance.alternate_names:
             citations = []
             for citation_handle in name.citation_list:
-                citation = form.database.get_note_from_handle(citation_handle)
+                citation = form.database.get_citation_from_handle(citation_handle)
                 if citation:
                     citations.append(citation)
             citationq = len(citations) > 0
