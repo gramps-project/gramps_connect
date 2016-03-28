@@ -13,6 +13,7 @@ Requirements
 * tornado
 * PIL
 * gramps >= 5.0
+* simplejson
 
 Installation
 -------------
