@@ -228,6 +228,9 @@ if __name__ == "__main__":
                 tornado.autoreload.watch(template_filename)
     app = GrampsConnect(options)
     app.listen(options.port)
+    tornado.log.logging.info("Starting with the folowing options:")
+    for key in ["port", "home_dir", "hostname", "database", "sitename", "debug", "xsrf", "base_dir"]:
+        tornado.log.logging.info("  options." + key + ": " + repr(getattr(options, key)))
     try:
         tornado.ioloop.IOLoop.current().start()
     except KeyboardInterrupt:
