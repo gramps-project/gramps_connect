@@ -51,9 +51,9 @@ define("debug", default=False,
        help="Tornado debug", type=bool)
 define("xsrf", default=True,
        help="Use xsrf cookie", type=bool)
-define("base_dir", default=None,
+define("data_dir", default=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data")),
        help="Base directory (where static, templates, etc. are)", type=str)
-define("home_dir", default=None,
+define("home_dir", default=os.path.expanduser("~/.gramps/"),
        help="Home directory for media", type=str)
 
 class GrampsConnect(Application):
@@ -171,32 +171,35 @@ class GrampsConnect(Application):
                     "database": self.database,
                 }
             ),
-            url(r"/styles/img/(.*)", StaticFileHandler,
+            url(r"/data/(.*)", StaticFileHandler,
                 {
-                    'path': os.path.join(gramps.gen.const.PLUGINS_DIR, "webstuff", "img"),
+                    'path': self.options.data_dir,
                 }),
-            url(r"/styles/(.*)", StaticFileHandler,
+            url(r"/css/(.*)", StaticFileHandler,
                 {
-                    'path': gramps.gen.const.DATA_DIR,
+                    'path': os.path.join(gramps.gen.const.DATA_DIR, "css"),
                 }),
             url(r"/images/(.*)", StaticFileHandler,
                 {
+                    'path': os.path.join(gramps.gen.const.DATA_DIR, "images"),
+                }),
+            url(r"/misc/(.*)", StaticFileHandler,
+                {
                     'path': gramps.gen.const.IMAGE_DIR,
+                }),
+            url(r"/img/(.*)", StaticFileHandler,
+                {
+                    'path': os.path.join(gramps.gen.const.PLUGINS_DIR, "webstuff", "img"),
                 }),
         ], **settings)
 
     def default_settings(self):
         """
         """
-        if self.options.base_dir is None:
-            self.options.base_dir = os.path.dirname(__file__)
-        if self.options.home_dir is None:
-            self.options.home_dir = os.path.expanduser("~/.gramps/")
         return {
             "cookie_secret": base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
             "login_url":     "/login",
-            'template_path': os.path.join(self.options.base_dir, "templates"),
-            'static_path':   os.path.join(self.options.base_dir, "static"),
+            'template_path': os.path.join(self.options.data_dir, "templates"),
             'debug':         self.options.debug,
             "xsrf_cookies":  self.options.xsrf,
         }
@@ -219,8 +222,9 @@ if __name__ == "__main__":
         log = logging.getLogger()
         log.setLevel(logging.DEBUG)
         tornado.log.logging.info("Debug mode...")
-        directory = os.path.realpath(".")
-        template_directory = os.path.join(directory, 'gramps_connect', 'templates')
+        directory = options.data_dir 
+        template_directory = os.path.join(directory, 'templates')
+        tornado.log.logging.info(template_directory)
         for dirpath, dirnames, filenames in os.walk(template_directory):
             for filename in filenames:
                 template_filename = os.path.join(dirpath, filename)
@@ -229,7 +233,7 @@ if __name__ == "__main__":
     app = GrampsConnect(options)
     app.listen(options.port)
     tornado.log.logging.info("Starting with the folowing options:")
-    for key in ["port", "home_dir", "hostname", "database", "sitename", "debug", "xsrf", "base_dir"]:
+    for key in ["port", "home_dir", "hostname", "database", "sitename", "debug", "xsrf", "data_dir"]:
         tornado.log.logging.info("  options." + key + ": " + repr(getattr(options, key)))
     try:
         tornado.ioloop.IOLoop.current().start()
