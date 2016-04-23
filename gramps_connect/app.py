@@ -214,6 +214,8 @@ class GrampsConnect(Application):
         return ""
 
 if __name__ == "__main__":
+    if 'GRAMPS_RESOURCES' not in os.environ:
+        os.environ['GRAMPS_RESOURCES'] = os.path.abspath(os.path.dirname(__file__))
     tornado.options.parse_command_line()
     tornado.log.logging.info("Gramps Connect starting...")
     if options.debug:
@@ -232,9 +234,10 @@ if __name__ == "__main__":
                 tornado.autoreload.watch(template_filename)
     app = GrampsConnect(options)
     app.listen(options.port)
-    tornado.log.logging.info("Starting with the folowing options:")
+    tornado.log.logging.info("Starting with the folowing settings:")
     for key in ["port", "home_dir", "hostname", "database", "sitename", "debug", "xsrf", "data_dir"]:
         tornado.log.logging.info("  options." + key + ": " + repr(getattr(options, key)))
+    tornado.log.logging.info("  GRAMPS_CONNECT: " + os.environ['GRAMPS_RESOURCES'])
     try:
         tornado.ioloop.IOLoop.current().start()
     except KeyboardInterrupt:

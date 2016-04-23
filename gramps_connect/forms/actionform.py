@@ -27,7 +27,7 @@ from .forms import Form, Column, Row
 
 # Gramps imports:
 from gramps.cli.plug import BasePluginManager, run_report
-from gramps.plugins.database.dictionarydb import DictionaryDb
+from ..dictionarydb import DictionaryDb
 from gramps.cli.user import User
 
 # Classes:
