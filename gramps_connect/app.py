@@ -98,62 +98,83 @@ class GrampsConnect(Application):
                     "opts" : self.options,
                 },
             ),
-            url(r'/action/(.*)', ActionHandler,
+            url(r'/action/?(.*)', ActionHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
                     "opts" : self.options,
                 },
                 name="action"),
-            url(r'/action', ActionHandler,
-                {
-                    "database": self.database,
-                    "sitename": self.sitename,
-                    "opts" : self.options,
-                },
-            ),
-            url(r'/person/(.*)', PersonHandler,
+            url(r'/person/?(.*)', PersonHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
                     "opts" : self.options,
                 },
                 name="person"),
-            url(r'/person', PersonHandler,
-                {
-                    "database": self.database,
-                    "sitename": self.sitename,
-                    "opts" : self.options,
-                },
-            ),
-            url(r'/note/(.*)', NoteHandler,
+            url(r'/note/?(.*)', NoteHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
                     "opts" : self.options,
                 },
                 name="note"),
-            url(r'/note', NoteHandler,
-                {
-                    "database": self.database,
-                    "sitename": self.sitename,
-                    "opts" : self.options,
-                },
-            ),
-            url(r'/family/(.*)', FamilyHandler,
+            url(r'/family/?(.*)', FamilyHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
                     "opts" : self.options,
                 },
                 name="family"),
-            url(r'/family', FamilyHandler,
+            url(r'/citation/?(.*)', CitationHandler,
                 {
                     "database": self.database,
                     "sitename": self.sitename,
                     "opts" : self.options,
                 },
-            ),
+                name="citation"),
+            url(r'/event/?(.*)', EventHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+                name="event"),
+            url(r'/media/?(.*)', MediaHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+                name="media"),
+            url(r'/place/?(.*)', PlaceHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+                name="place"),
+            url(r'/repository/?(.*)', RepositoryHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+                name="repository"),
+            url(r'/source/?(.*)', SourceHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+                name="source"),
+            url(r'/tag/?(.*)', TagHandler,
+                {
+                    "database": self.database,
+                    "sitename": self.sitename,
+                    "opts" : self.options,
+                },
+                name="tag"),
             url(r'/imageserver/(.*)', ImageHandler,
                 {
                     "database": self.database,
@@ -215,7 +236,8 @@ class GrampsConnect(Application):
 
 if __name__ == "__main__":
     if 'GRAMPS_RESOURCES' not in os.environ:
-        os.environ['GRAMPS_RESOURCES'] = os.path.abspath(os.path.dirname(__file__))
+        os.environ['GRAMPS_RESOURCES'] = os.path.join(
+            os.path.abspath(os.path.dirname(gramps.__file__)), "..")
     tornado.options.parse_command_line()
     tornado.log.logging.info("Gramps Connect starting...")
     if options.debug:
@@ -237,10 +259,12 @@ if __name__ == "__main__":
     tornado.log.logging.info("Starting with the folowing settings:")
     for key in ["port", "home_dir", "hostname", "database", "sitename", "debug", "xsrf", "data_dir"]:
         tornado.log.logging.info("  options." + key + ": " + repr(getattr(options, key)))
-    tornado.log.logging.info("  GRAMPS_CONNECT: " + os.environ['GRAMPS_RESOURCES'])
+    tornado.log.logging.info("  GRAMPS_RESOURCES: " + os.environ['GRAMPS_RESOURCES'])
     try:
         tornado.ioloop.IOLoop.current().start()
     except KeyboardInterrupt:
-        tornado.log.logging.info("Gramps Connect shutting down...")
-        if app.database:
-            app.database.close()
+        tornado.log.logging.info("Gramps Connect received interrupt...")
+    tornado.log.logging.info("Gramps Connect shutting down...")
+    if app.database:
+        tornado.log.logging.info("Gramps closing database...")
+        app.database.close()

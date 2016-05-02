@@ -26,3 +26,10 @@ from .deletehandler import DeleteHandler
 from .jsonhandler import JsonHandler
 from .actionhandler import ActionHandler
 from .notehandler import NoteHandler
+from .citationhandler import CitationHandler
+from .eventhandler import EventHandler
+from .mediahandler import MediaHandler
+from .placehandler import PlaceHandler
+from .repositoryhandler import RepositoryHandler
+from .sourcehandler import SourceHandler
+from .taghandler import TagHandler

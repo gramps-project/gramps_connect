@@ -22,3 +22,10 @@ from .personform import PersonForm
 from .familyform import FamilyForm
 from .actionform import ActionForm
 from .noteform import NoteForm
+from .citationform import CitationForm
+from .eventform import EventForm
+from .mediaform import MediaForm
+from .placeform import PlaceForm
+from .repositoryform import RepositoryForm
+from .sourceform import SourceForm
+from .tagform import TagForm
