@@ -62,9 +62,8 @@ class MediaForm(Form):
     select_fields = [
         ("gramps_id", 10),
         ("path", 20),
-        ("mime", 10),
-        ("desc", 30),
-        ("change", 10),
+        ("desc", 25),
+        ("change", 25),
         ("date", 10),
         ("private", 5),
     ]
@@ -73,17 +72,6 @@ class MediaForm(Form):
     env_fields = [
         "handle",
     ]
-
-    def set_post_process_functions(self):
-        """
-        Set the post_process_functions dictionary.
-        """
-        self.post_process_functions = {
-            "text.string": self.preview,
-        }
-
-    def preview(self, text, env):
-        return text[:100]
 
     def describe(self):
         """

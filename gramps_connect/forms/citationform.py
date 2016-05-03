@@ -63,8 +63,8 @@ class CitationForm(Form):
         ("gramps_id", 10),
         ("date", 10),
         ("page", 10),
-        ("confidence", 10),
-        ("change", 10),
+        ("confidence", 5),
+        ("change", 20),
         ("private", 10),
     ]
 
@@ -72,17 +72,6 @@ class CitationForm(Form):
     env_fields = [
         "handle",
     ]
-
-    def set_post_process_functions(self):
-        """
-        Set the post_process_functions dictionary.
-        """
-        self.post_process_functions = {
-            "text.string": self.preview,
-        }
-
-    def preview(self, text, env):
-        return text[:100]
 
     def describe(self):
         """

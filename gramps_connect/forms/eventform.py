@@ -61,28 +61,17 @@ class EventForm(Form):
     # Fields for page view; width sum = 95%:
     select_fields = [
         ("gramps_id", 10),
-        ("type", 10),
-        ("description", 45),
-        ("date", 10),
-        ("change", 10),
-        ("private", 10),
+        ("type", 5),
+        ("description", 25),
+        ("date", 20),
+        ("change", 20),
+        ("private", 5),
     ]
 
     # Other fields needed to select:
     env_fields = [
         "handle",
     ]
-
-    def set_post_process_functions(self):
-        """
-        Set the post_process_functions dictionary.
-        """
-        self.post_process_functions = {
-            "text.string": self.preview,
-        }
-
-    def preview(self, text, env):
-        return text[:100]
 
     def describe(self):
         """

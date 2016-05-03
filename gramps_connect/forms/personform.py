@@ -91,35 +91,6 @@ class PersonForm(Form):
         "event_ref_list",
     ]
 
-    def set_post_process_functions(self):
-        """
-        Set the post_process_functions dictionary.
-        """
-        self.post_process_functions = {
-            "gender": self.render_gender,
-            "birth_ref_index": self.event_index,
-            "death_ref_index": self.event_index,
-            #"tag_list": self.get_tag_from_handle:name
-        }
-
-    def event_index(self, index, env):
-        """
-        Used for revent_ref_index lookups.
-        """
-        if 0 <= index < len(env["event_ref_list"]):
-            event_ref = env["event_ref_list"][index]
-            if event_ref.ref:
-                event = self.database.get_event_from_handle(event_ref.ref)
-                if event:
-                    return event.date
-        return ""
-
-    def render_gender(self, gender_code, env):
-        """
-        Text for gender codes.
-        """
-        return [self._("Female"), self._("Male"), self._("Unknown")][gender_code]
-
     def describe(self):
         """
         Textual description of this instance.

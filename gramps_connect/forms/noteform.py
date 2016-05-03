@@ -69,17 +69,6 @@ class NoteForm(Form):
         "handle",
     ]
 
-    def set_post_process_functions(self):
-        """
-        Set the post_process_functions dictionary.
-        """
-        self.post_process_functions = {
-            "text.string": self.preview,
-        }
-
-    def preview(self, text, env):
-        return text[:100]
-
     def describe(self):
         """
         Textual description of this instance.

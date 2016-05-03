@@ -61,11 +61,11 @@ class SourceForm(Form):
     # Fields for page view; width sum = 95%:
     select_fields = [
         ("gramps_id", 10),
-        ("title", 30),
+        ("title", 20),
         ("author", 20),
         ("pubinfo", 10),
         ("abbrev", 10),
-        ("change", 10),
+        ("change", 20),
         ("private", 5),
     ]
 
@@ -73,17 +73,6 @@ class SourceForm(Form):
     env_fields = [
         "handle",
     ]
-
-    def set_post_process_functions(self):
-        """
-        Set the post_process_functions dictionary.
-        """
-        self.post_process_functions = {
-            "text.string": self.preview,
-        }
-
-    def preview(self, text, env):
-        return text[:100]
 
     def describe(self):
         """

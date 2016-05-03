@@ -60,27 +60,16 @@ class TagForm(Form):
 
     # Fields for page view; width sum = 95%:
     select_fields = [
-        ("name", 55),
+        ("name", 45),
         ("color", 20),
         ("priority", 10),
-        ("change", 10),
+        ("change", 20),
     ]
 
     # Other fields needed to select:
     env_fields = [
         "handle",
     ]
-
-    def set_post_process_functions(self):
-        """
-        Set the post_process_functions dictionary.
-        """
-        self.post_process_functions = {
-            "text.string": self.preview,
-        }
-
-    def preview(self, text, env):
-        return text[:100]
 
     def describe(self):
         """

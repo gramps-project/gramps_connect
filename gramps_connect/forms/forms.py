@@ -25,8 +25,11 @@ import time
 from ..template_functions import make_button
 
 from gramps.gen.display.name import NameDisplay
+from gramps.gen.datehandler import displayer, parser
 
 nd = NameDisplay().display
+dd = displayer.display
+dp = parser.parse
 
 class Row(list):
     """
@@ -337,3 +340,45 @@ class Form(object):
                         "width": width,
                     }
         return ""
+
+    def set_post_process_functions(self):
+        """
+        Set the post_process_functions dictionary.
+        """
+        self.post_process_functions = {
+            "date": self.render_date,
+            "change": self.render_change,
+            "gender": self.render_gender,
+            "birth_ref_index": self.event_index,
+            "death_ref_index": self.event_index,
+            "text.string": self.preview,
+            #"tag_list": self.get_tag_from_handle:name
+        }
+
+    def preview(self, text, env):
+        return text[:100]
+
+    def render_date(self, date, env):
+        return dd(date)
+
+    def render_change(self, change, env):
+        return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(change))
+
+    def event_index(self, index, env):
+        """
+        Used for revent_ref_index lookups.
+        """
+        if 0 <= index < len(env["event_ref_list"]):
+            event_ref = env["event_ref_list"][index]
+            if event_ref.ref:
+                event = self.database.get_event_from_handle(event_ref.ref)
+                if event:
+                    return event.date
+        return ""
+
+    def render_gender(self, gender_code, env):
+        """
+        Text for gender codes.
+        """
+        return [self._("Female"), self._("Male"), self._("Unknown")][gender_code]
+
