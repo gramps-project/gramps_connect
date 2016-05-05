@@ -91,12 +91,6 @@ class PersonForm(Form):
         "event_ref_list",
     ]
 
-    def describe(self):
-        """
-        Textual description of this instance.
-        """
-        return nd(self.instance)
-
     def probably_alive(self):
         """
         Placeholder for a probably_alive value.

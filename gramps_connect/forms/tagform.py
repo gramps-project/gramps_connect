@@ -35,8 +35,6 @@ class TagForm(Form):
     # Fields for editor:
     edit_fields = [
         "type",
-        "text.string",
-        "gramps_id",
         "tag_list",
         "private",
     ]
@@ -47,13 +45,10 @@ class TagForm(Form):
     # Search fields to use if not specified:
     default_search_fields = [
         "text.string",
-        "gramps_id",
     ]
 
     # Search fields, list is OR
     search_terms = {
-        "text": "text.string",
-        "id": "gramps_id",
     }
 
     order_by = [("name", "ASC")]
@@ -72,8 +67,4 @@ class TagForm(Form):
     ]
 
     def describe(self):
-        """
-        Textual description of this instance.
-        """
-        return str(self.instance.gramps_id)
-
+        return self.instance.name

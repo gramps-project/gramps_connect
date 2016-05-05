@@ -47,7 +47,7 @@ class CitationHandler(BaseHandler):
                 action = "edit"
             else:
                 citation = self.database.get_citation_from_handle(handle)
-            if note:
+            if citation:
                 self.render("citation.html",
                             **self.get_template_dict(tview=_("citation detail"),
                                                      action=action,

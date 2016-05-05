@@ -256,9 +256,6 @@ class Form(object):
             headings.append(Column(self._class.get_label(field, self._), width))
         return headings
 
-    def describe(self):
-        raise Exception("not implemented")
-
     def get_label(self, field):
         return self.instance.get_label(field, self._)
 
@@ -381,4 +378,10 @@ class Form(object):
         Text for gender codes.
         """
         return [self._("Female"), self._("Male"), self._("Unknown")][gender_code]
+
+    def describe(self):
+        """
+        Textual description of this instance.
+        """
+        return str(self.instance.gramps_id)
 

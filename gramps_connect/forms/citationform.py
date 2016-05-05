@@ -73,9 +73,3 @@ class CitationForm(Form):
         "handle",
     ]
 
-    def describe(self):
-        """
-        Textual description of this instance.
-        """
-        return str(self.instance.gramps_id)
-

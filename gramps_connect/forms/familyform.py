@@ -74,6 +74,3 @@ class FamilyForm(Form):
             #"tag_list": self.get_tag_from_handle:name
         }
 
-    def describe(self):
-        return str(self.instance)
-
