@@ -52,31 +52,46 @@ You can run gramps_connect directly from either the downloaded directory, or fro
 Installed version:
 
 ```shell
-python3 -m gramps_connect.app --database="My Family Tree"
+python3 -m gramps_connect.app --config="familytree.conf"
 ```
 Downloaded versions:
 
 ```shell
 cd gramps_connect
-PYTHONPATH=../gramps:. python3 -m gramps_connect.app --database="My Family Tree"
+PYTHONPATH=../gramps:. python3 -m gramps_connect.app --config="familytree.conf"
 ```
 
-Common Flags
+Where `familytree.conf` contains options and values, such as:
+
+```python
+port = 8000
+database = "My Family Tree"
+username = "demo"
+```
+
+If you do not provide `--password` (a crypt-based password) on the command-line or in the config file then a plaintext password will be interactively requested, and the crypt generated.
+
+Options:
 ------------
 
+* --database
+* --username
+* --password
 * --debug
 * --port
 * --hostname
-* --database
 * --sitename
+* --data_dir
+* --home_dir
+* --xsrf
 
 Common variations
 -----------------
 
 ```shell
-PYTHONPATH=/path/to/gramps python3 -m gramps_connect.app --database="Smith Family"
+PYTHONPATH=/path/to/gramps python3 -m gramps_connect.app --database="Smith Family" --username=demo
 
 python3 -m gramps_connect.app --help
 
-python3 -m gramps_connect.app --debug=True --base_dir=/path/to/templates --database="Smith Family"
+python3 -m gramps_connect.app --debug --base_dir=/path/to/templates --database="Smith Family" --username=demo
 ```
