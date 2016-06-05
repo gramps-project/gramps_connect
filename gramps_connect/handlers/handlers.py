@@ -20,6 +20,8 @@
 
 import tornado.web
 import logging
+import hmac
+import crypt
 
 from gramps.gen.utils.grampslocale import GrampsLocale, _
 from gramps.gen.utils.id import create_id
@@ -95,8 +97,10 @@ class LoginHandler(BaseHandler):
     def post(self):
         getusername = self.get_argument("username")
         getpassword = self.get_argument("password")
-        # TODO : Check data from DB
-        if "demo" == getusername and "demo" == getpassword:
+        if (getusername == self.opts.username and
+            hmac.compare_digest(self.opts.password,
+                                crypt.crypt(getpassword,
+                                            self.opts.password))):
             self.set_secure_cookie("user", self.get_argument("username"))
             self.redirect(self.get_argument("next",
                                             self.reverse_url("main")))
@@ -112,4 +116,3 @@ class LogoutHandler(BaseHandler):
         self.clear_cookie("user")
         self.redirect(self.get_argument("next",
                                         self.reverse_url("main")))
-

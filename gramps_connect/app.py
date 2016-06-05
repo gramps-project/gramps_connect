@@ -22,6 +22,8 @@
 import os
 import base64
 import uuid
+import crypt
+import getpass
 
 ## Tornado imports
 import tornado.ioloop
@@ -55,6 +57,12 @@ define("data_dir", default=os.path.abspath(os.path.join(os.path.dirname(__file__
        help="Base directory (where static, templates, etc. are)", type=str)
 define("home_dir", default=os.path.expanduser("~/.gramps/"),
        help="Home directory for media", type=str)
+define("config", default=None,
+       help="Config file of options", type=str)
+define("username", default=None,
+       help="Login username", type=str)
+define("password", default=None,
+       help="Login encrypted password", type=str)
 
 class GrampsConnect(Application):
     """
@@ -239,6 +247,13 @@ if __name__ == "__main__":
         os.environ['GRAMPS_RESOURCES'] = os.path.join(
             os.path.abspath(os.path.dirname(gramps.__file__)), "..")
     tornado.options.parse_command_line()
+    if options.config:
+        tornado.options.parse_config_file(options.config)
+    if options.username is None:
+        raise Exception("--username=NAME was not provided")
+    if options.password is None:
+        plaintext = getpass.getpass()
+        options.password = crypt.crypt(plaintext)
     tornado.log.logging.info("Gramps Connect starting...")
     if options.debug:
         import tornado.autoreload
@@ -246,7 +261,7 @@ if __name__ == "__main__":
         log = logging.getLogger()
         log.setLevel(logging.DEBUG)
         tornado.log.logging.info("Debug mode...")
-        directory = options.data_dir 
+        directory = options.data_dir
         template_directory = os.path.join(directory, 'templates')
         tornado.log.logging.info(template_directory)
         for dirpath, dirnames, filenames in os.walk(template_directory):
@@ -257,9 +272,12 @@ if __name__ == "__main__":
     app = GrampsConnect(options)
     app.listen(options.port)
     tornado.log.logging.info("Starting with the folowing settings:")
-    for key in ["port", "home_dir", "hostname", "database", "sitename", "debug", "xsrf", "data_dir"]:
-        tornado.log.logging.info("  options." + key + ": " + repr(getattr(options, key)))
+    for key in ["port", "home_dir", "hostname", "database", "sitename",
+                "debug", "xsrf", "data_dir", "config", "username",
+                "password"]:
+        tornado.log.logging.info("    " + key + " = " + repr(getattr(options, key)))
     tornado.log.logging.info("  GRAMPS_RESOURCES: " + os.environ['GRAMPS_RESOURCES'])
+    tornado.log.logging.info("Control+C to stop server. Running...")
     try:
         tornado.ioloop.IOLoop.current().start()
     except KeyboardInterrupt:
