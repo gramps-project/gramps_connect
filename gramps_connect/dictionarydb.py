@@ -97,6 +97,20 @@ class DictionaryDb(DbGeneric):
         """
         pass
 
+    def get_python_version(self, directory=None):
+        """
+        Get the version of python that the database was created
+        under.
+        """
+        return 3
+
+    def get_schema_version(self, directory=None):
+        """
+        Get the version of the schema that the database was created
+        under.
+        """
+        return 18
+
     def write_version(self, directory):
         """Write files for a newly created DB."""
         versionpath = os.path.join(directory, str(DBBACKEND))
