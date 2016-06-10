@@ -1,0 +1,11 @@
+       sudo apt install python3-pip
+       sudo pip3 install pip --upgrade
+       sudo apt-get install git 
+       git clone https://github.com/gramps-project/gramps
+       python3 setup.py build
+       ./Gramps.py --config=behavior.database-backend:dbapi -C "data.gramps" -i example/gramps/data.gramps 
+
+       git clone https://github.com/gramps-project/gramps-connect
+       sudo pip3 install simplejson tornado -U
+       cd gramps_connect/
+       PYTHONPATH=../master python3 -m gramps_connect.app --database=data.gramps --username=demo
