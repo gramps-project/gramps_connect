@@ -1,0 +1,15 @@
+## systemd config file for starting a gramps_connect server
+
+[Unit]
+Description=Gramps Connect Web Server
+
+[Service]
+User=dblank
+Group=dblank
+Environment=PYTHONPATH=/home/dblank/gramps/master
+WorkingDirectory=/home/dblank/gramps/gramps_connect
+ExecStart=/usr/bin/python3 -m gramps_connect.app --username=demo --password=$6$QJzh0eYsZ1I2YhM.$IRLi3AmQV7mtw5nl1CkAc3GIYXmCasQ8dArpTb6UKCzS1nKY3rUrWPmYEbXQd12X7FPK4uqG2abJkg9xzkIlO/ --database=data.gramps --sitename="Jones Family" --port=8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
