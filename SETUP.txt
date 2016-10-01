@@ -3,7 +3,7 @@
        sudo apt-get install git 
        git clone https://github.com/gramps-project/gramps
        python3 setup.py build
-       ./Gramps.py --config=behavior.database-backend:dbapi -C "data.gramps" -i example/gramps/data.gramps 
+       ./Gramps.py --config=database-backend:dbapi -C "data.gramps" -i example/gramps/data.gramps 
 
        git clone https://github.com/gramps-project/gramps-connect
        sudo pip3 install simplejson tornado -U
