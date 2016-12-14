@@ -1,8 +1,16 @@
+As of 16th Decemember 2016 this version of gramps_connect remains experimental code. It was never actually released.
+
+If anyone is interested in developing a web front-end for Gramps, then I would be happy to help.
+
+See: https://github.com/gramps-project/gramps_connect/commit/80f1332a98055c3acf98d5212bf34f53653c7f8e
+
 # Gramps Connect
 
-Gramps Connect is a web-based application for genealogy. It uses the Gramps API for data, reports, import/export, etc.
+Gramps Connect is an experiemental web-based application for genealogy. It uses the Gramps API for data, reports, import/export, etc.
 
-* Designed for collaboration and large databases
+Planned to be for:
+
+* Collaboration and large databases
 * Multi-user, password protected
 * Support IIIF Image Server API - http://iiif.io/api/image/2.1/
 
@@ -12,18 +20,18 @@ Requirements
 * Python3
 * tornado
 * PIL
-* gramps >= 5.0
+* gramps = to experimental "gep-033-select-api" branch only
 * simplejson
 
 Installation
 -------------
 
-Pre-release installation:
+Experimental installation information:
 
-Before Gramps 5.0 is released, you will need to get Gramps from github:
+You will need to get the experimental "gep-033-select-api" branch for Gramps from github:
 
 ```shell
-git clone --depth 1 https://github.com/gramps-project/gramps.git
+git clone --depth 1 https://github.com/gramps-project/gramps.git --branch geps/gep-033-select-api --single-branch gramps
 cd gramps
 python3 setup.py build
 ```
@@ -35,13 +43,6 @@ You can also get gramps_connect from github:
 ```shell
 git clone --depth 1 https://github.com/gramps-project/gramps_connect.git
 cd gramps_connect
-```
-
-Released version installation (once Gramps 5.0 is released):
-
-```shell
-pip3 install gramps
-pip3 install gramps_connect
 ```
 
 Running
