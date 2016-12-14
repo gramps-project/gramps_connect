@@ -1,4 +1,4 @@
-As of 16th Decemember 2016 this version of gramps_connect remains experimental code. It was never actually released.
+As of 16th December 2016 this version of gramps_connect remains experimental code. It was never actually released.
 
 If anyone is interested in developing a web front-end for Gramps, then I would be happy to help.
 
